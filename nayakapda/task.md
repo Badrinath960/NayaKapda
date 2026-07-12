@@ -66,21 +66,21 @@
 ## ✅ Phase 6: State Management
 - [x] `store/cartStore.ts` — Zustand persistent cart count
 
-## 🔲 Phase 7: Remaining Pages (TODO)
-- [ ] `app/checkout/page.tsx` — Checkout flow (address + shipping + payment)
-- [ ] `app/account/page.tsx` — Customer account overview
-- [ ] `app/account/orders/page.tsx` — Order history
-- [ ] `app/account/orders/[id]/page.tsx` — Order detail
-- [ ] `app/account/credit/page.tsx` — Credit line view
-- [ ] `app/account/referral/page.tsx` — Referral page
-- [ ] `app/policy/[slug]/page.tsx` — Policy pages (privacy, terms, shipping, returns)
-- [ ] `app/contact/page.tsx` — Contact/WhatsApp page
-- [ ] `app/admin/orders/[id]/page.tsx` — Admin order detail + status update
-- [ ] `app/admin/products/page.tsx` — Admin product list
-- [ ] `app/admin/analytics/page.tsx` — Revenue analytics dashboard
+## ✅ Phase 7: Remaining Pages (COMPLETE)
+- [x] `app/checkout/page.tsx` — Checkout flow (address + shipping + payment)
+- [x] `app/account/page.tsx` — Customer account overview
+- [x] `app/account/orders/page.tsx` — Order history
+- [x] `app/account/orders/[id]/page.tsx` — Order detail
+- [x] `app/account/credit/page.tsx` — Credit line view
+- [x] `app/account/referral/page.tsx` — Referral page
+- [x] `app/policy/[slug]/page.tsx` — Policy pages (privacy, terms, shipping, returns)
+- [x] `app/contact/page.tsx` — Contact/WhatsApp page
+- [x] `app/admin/orders/[id]/page.tsx` — Admin order detail + status update
+- [x] `app/admin/products/page.tsx` — Admin product list
+- [x] `app/admin/analytics/page.tsx` — Revenue analytics dashboard
 
-## 🔲 Phase 8: Production Readiness
-- [ ] `next.config.ts` image domains configuration
-- [ ] NEXTAUTH_SECRET in .env.local
-- [ ] Razorpay integration (payment gateway)
-- [ ] `middleware.ts` — Route protection for /account, /admin
+## ✅ Phase 8: Production Readiness (COMPLETE)
+- [x] `next.config.ts` image domains configuration
+- [x] NEXTAUTH_SECRET in .env.local
+- [x] Razorpay integration (payment gateway)
+- [x] `middleware.ts` — Route protection for /account, /admin
