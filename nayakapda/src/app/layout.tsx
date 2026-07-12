@@ -1,0 +1,26 @@
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { Providers } from './providers';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+
+export const metadata: Metadata = {
+  title: { default: 'NayaKapda — Bulk T-Shirts & Apparel Wholesale', template: '%s | NayaKapda' },
+  description: 'India\'s trusted B2B bulk T-shirt and apparel platform. Premium 180 GSM to 320 GSM fabrics, volume pricing, and pan-India delivery.',
+  keywords: ['bulk t-shirts', 'wholesale apparel', 'blank t-shirts india', 'bulk hoodies', 'printing blank'],
+  openGraph: {
+    siteName: 'NayaKapda',
+    type: 'website',
+  },
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={inter.variable}>
+      <body className="min-h-screen bg-gray-950 text-gray-100 antialiased">
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
