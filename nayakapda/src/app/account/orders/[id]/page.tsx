@@ -6,48 +6,36 @@ import Link from 'next/link';
 import { formatINR, formatDate } from '@/lib/utils';
 import type { OrderStatus } from '@prisma/client';
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  return { title: `Order #${params.id.slice(-8).toUpperCase()} — NayaKapda` };
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return { title: `Order #${id.slice(-8).toUpperCase()} — NayaKapda` };
 }
 
 function StatusBadge({ status }: { status: OrderStatus }) {
   const map: Record<OrderStatus, { cls: string; label: string }> = {
     PLACED: { cls: 'badge-orange', label: 'Placed' },
     CONFIRMED: { cls: 'badge-blue', label: 'Confirmed' },
-    DISPATCHED: { cls: 'badge-gray', label: 'Dispatched' },
+    DISPATCHED: { cls: 'badge-blue', label: 'Dispatched' },
     DELIVERED: { cls: 'badge-green', label: 'Delivered' },
     CANCELLED: { cls: 'badge-red', label: 'Cancelled' },
   };
   const { cls, label } = map[status] ?? { cls: 'badge-gray', label: status };
-  const style =
-    status === 'DISPATCHED'
-      ? {
-          display: 'inline-flex',
-          alignItems: 'center',
-          padding: '0.125rem 0.5rem',
-          borderRadius: '9999px',
-          fontSize: '0.75rem',
-          fontWeight: 500,
-          background: 'rgba(139,92,246,0.15)',
-          color: '#a78bfa',
-          border: '1px solid rgba(139,92,246,0.3)',
-        }
-      : undefined;
   return (
-    <span className={style ? undefined : cls} style={style}>
+    <span className={cls}>
       {label}
     </span>
   );
 }
 
-export default async function OrderDetailPage({ params }: { params: { id: string } }) {
+export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/login?redirect=/account');
 
+  const { id } = await params;
   const userId = (session.user as any)?.id as string;
 
   const order = await prisma.order.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       items: {
         include: {
@@ -70,32 +58,32 @@ export default async function OrderDetailPage({ params }: { params: { id: string
   const discount = Number(order.discountAmount);
   const shipping = Number(order.shippingCost);
   const total = Number(order.totalAmount);
+  
+  // Calculate 5% GST and Taxable Value
+  const taxableValue = subtotal - discount;
+  const gstAmount = taxableValue * 0.05;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* Header */}
+    <div className="space-y-6">
+      {/* Header / Breadcrumb */}
       <div>
-        <Link href="/account" style={{ color: '#9ca3af', fontSize: '0.875rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.375rem', marginBottom: '1rem' }}>
+        <Link href="/account/orders" className="text-slate-500 text-xs font-semibold hover:text-orange-600 flex items-center gap-1.5 mb-3 transition-colors">
           ← Back to Orders
         </Link>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 style={{ fontSize: '1.375rem', fontWeight: 700, color: '#f9fafb', margin: 0 }}>
-              Order{' '}
-              <span style={{ fontFamily: 'monospace', color: '#f97316' }}>
-                #{order.id.slice(-8).toUpperCase()}
-              </span>
+            <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+              Order <span className="font-mono text-orange-600">#{order.id.slice(-8).toUpperCase()}</span>
             </h1>
-            <p style={{ color: '#9ca3af', fontSize: '0.8rem', margin: '0.25rem 0 0' }}>
-              Placed on {formatDate(order.createdAt)} · {order.paymentMode}
+            <p className="text-slate-500 text-xs mt-1 font-medium">
+              Placed on {formatDate(order.createdAt)} · Payment: {order.paymentMode}
             </p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="flex items-center gap-3">
             <StatusBadge status={order.status} />
             <a
               href={`/api/account/orders/${order.id}/invoice`}
-              className="btn-secondary"
-              style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}
+              className="btn-secondary py-2 px-4 text-xs font-bold rounded-xl flex items-center gap-1.5"
             >
               📄 Download Invoice
             </a>
@@ -103,12 +91,12 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         </div>
       </div>
 
-      {/* Items */}
-      <div className="card" style={{ padding: '1.25rem' }}>
-        <h2 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
-          Order Items
-        </h2>
-        <div className="table-container">
+      {/* Items List */}
+      <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
+        <div className="p-4 border-b border-slate-200 bg-slate-50">
+          <h2 className="text-xs font-bold text-slate-600 uppercase tracking-wider">Ordered Products</h2>
+        </div>
+        <div className="table-container border-0 rounded-none shadow-none">
           <table className="table">
             <thead>
               <tr>
@@ -123,19 +111,16 @@ export default async function OrderDetailPage({ params }: { params: { id: string
             <tbody>
               {order.items.map((item) => (
                 <tr key={item.id}>
-                  <td>
-                    <Link
-                      href={`/products/${item.variant.product.slug}`}
-                      style={{ color: '#f9fafb', fontWeight: 500, textDecoration: 'none' }}
-                    >
+                  <td className="font-bold text-slate-900 text-xs">
+                    <Link href={`/products/${item.variant.product.slug}`} className="hover:text-orange-600 hover:underline">
                       {item.variant.product.name}
                     </Link>
                   </td>
-                  <td style={{ color: '#d1d5db' }}>{item.variant.size}</td>
-                  <td style={{ color: '#d1d5db' }}>{item.variant.color}</td>
-                  <td style={{ color: '#f97316', fontWeight: 600 }}>{item.qty}</td>
-                  <td>{formatINR(Number(item.unitPrice))}</td>
-                  <td style={{ color: '#f9fafb', fontWeight: 600 }}>{formatINR(Number(item.subtotal))}</td>
+                  <td className="text-slate-500 text-xs font-medium">{item.variant.size}</td>
+                  <td className="text-slate-500 text-xs font-medium">{item.variant.color}</td>
+                  <td className="font-bold text-orange-600 text-xs">{item.qty} pcs</td>
+                  <td className="text-slate-700 text-xs font-medium">{formatINR(Number(item.unitPrice))}</td>
+                  <td className="font-bold text-slate-900 text-xs">{formatINR(Number(item.subtotal))}</td>
                 </tr>
               ))}
             </tbody>
@@ -143,69 +128,77 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-        {/* Address */}
-        <div className="card" style={{ padding: '1.25rem' }}>
-          <h2 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
-            Delivery Address
-          </h2>
-          <div style={{ color: '#d1d5db', lineHeight: 1.7, fontSize: '0.875rem' }}>
-            {order.address.label && (
-              <p style={{ fontWeight: 600, color: '#f9fafb', margin: '0 0 0.25rem' }}>{order.address.label}</p>
-            )}
-            <p style={{ margin: 0 }}>{order.address.line1}</p>
-            <p style={{ margin: 0 }}>{order.address.city}, {order.address.state} — {order.address.pincode}</p>
-            <p style={{ margin: 0 }}>{order.address.country}</p>
+      {/* Grid: Delivery Info + Price Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        {/* Delivery Address Card */}
+        <div className="card p-5 space-y-3 bg-white border-slate-200 shadow-sm">
+          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Delivery Address</h3>
+          <div className="text-xs text-slate-700 space-y-1 font-medium">
+            <p className="font-bold text-slate-900 text-sm">{order.address.name}</p>
+            <p className="mt-2">{order.address.line1}</p>
+            <p>{order.address.city}, {order.address.state} — {order.address.pincode}</p>
+            <p className="text-slate-500 text-[10px] pt-1">Phone: {order.address.phone}</p>
           </div>
         </div>
 
-        {/* Shipping */}
-        <div className="card" style={{ padding: '1.25rem' }}>
-          <h2 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
-            Shipping
-          </h2>
-          {order.shippingMethod && (
-            <div style={{ fontSize: '0.875rem', color: '#d1d5db' }}>
-              <p style={{ fontWeight: 600, color: '#f9fafb', margin: '0 0 0.25rem' }}>{order.shippingMethod.name}</p>
-              <p style={{ margin: 0, color: '#9ca3af' }}>{order.shippingMethod.etaText}</p>
+        {/* Shipping Method Card */}
+        <div className="card p-5 space-y-3 bg-white border-slate-200 shadow-sm">
+          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Shipping Method</h3>
+          {order.shippingMethod ? (
+            <div className="text-xs text-slate-700 space-y-1 font-medium">
+              <p className="font-bold text-slate-900 text-sm">{order.shippingMethod.name}</p>
+              <p className="text-slate-500 text-xs">{order.shippingMethod.etaText}</p>
             </div>
+          ) : (
+            <p className="text-slate-500 text-xs font-medium">No shipping method selected</p>
           )}
+
           {order.trackingNumber && (
-            <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '0.5rem' }}>
-              <p style={{ color: '#9ca3af', fontSize: '0.75rem', margin: '0 0 0.25rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tracking Number</p>
-              <p style={{ fontFamily: 'monospace', color: '#60a5fa', fontWeight: 600, margin: 0 }}>{order.trackingNumber}</p>
-              {order.courierName && <p style={{ color: '#9ca3af', fontSize: '0.75rem', margin: '0.25rem 0 0' }}>via {order.courierName}</p>}
+            <div className="mt-3 p-3 bg-sky-50 border border-sky-200 rounded-xl space-y-1">
+              <p className="text-[10px] text-sky-800 uppercase tracking-wider font-bold">Tracking details</p>
+              <p className="font-mono text-sky-700 font-bold text-xs">{order.trackingNumber}</p>
+              {order.courierName && (
+                <p className="text-[10px] text-sky-600">Shipped via {order.courierName}</p>
+              )}
             </div>
           )}
         </div>
-      </div>
 
-      {/* Price breakdown */}
-      <div className="card" style={{ padding: '1.25rem', maxWidth: 400 }}>
-        <h2 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
-          Price Breakdown
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.875rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: '#d1d5db' }}>
-            <span>Subtotal</span>
-            <span>{formatINR(subtotal)}</span>
-          </div>
-          {discount > 0 && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#4ade80' }}>
-              <span>Discount {order.discountCode && `(${order.discountCode.code.toUpperCase()})`}</span>
-              <span>−{formatINR(discount)}</span>
+        {/* Price Summary Card */}
+        <div className="card p-5 space-y-3 bg-white border-slate-200 shadow-sm">
+          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Price Breakdown</h3>
+          <div className="space-y-2 text-xs text-slate-600 font-medium">
+            <div className="flex justify-between">
+              <span>Subtotal</span>
+              <span className="font-semibold text-slate-900">{formatINR(subtotal)}</span>
             </div>
-          )}
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: '#d1d5db' }}>
-            <span>Shipping</span>
-            <span>{shipping === 0 ? <span style={{ color: '#4ade80' }}>Free</span> : formatINR(shipping)}</span>
-          </div>
-          <div style={{ height: 1, background: '#1f2937', margin: '0.25rem 0' }} />
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: '#f9fafb', fontWeight: 700, fontSize: '1rem' }}>
-            <span>Total</span>
-            <span style={{ color: '#f97316' }}>{formatINR(total)}</span>
+            {discount > 0 && (
+              <div className="flex justify-between text-emerald-700 font-bold">
+                <span>Discount {order.discountCode && `(${order.discountCode.code.toUpperCase()})`}</span>
+                <span>−{formatINR(discount)}</span>
+              </div>
+            )}
+            <div className="flex justify-between">
+              <span>Taxable Value</span>
+              <span className="font-semibold text-slate-900">{formatINR(taxableValue)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>5% GST</span>
+              <span className="font-semibold text-slate-900">{formatINR(gstAmount)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Shipping</span>
+              <span>{shipping === 0 ? <span className="text-emerald-700 font-bold">Free</span> : formatINR(shipping)}</span>
+            </div>
+            <div className="h-px bg-slate-200 my-1" />
+            <div className="flex justify-between font-bold text-slate-900 text-sm">
+              <span>Total Amount</span>
+              <span className="text-orange-600 font-black">{formatINR(total)}</span>
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );

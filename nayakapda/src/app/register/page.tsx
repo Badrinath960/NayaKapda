@@ -39,19 +39,19 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 text-slate-900 py-10">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="text-3xl font-black gradient-text">NayaKapda</Link>
-          <p className="text-gray-500 mt-2 text-sm">Bulk Apparel Platform</p>
+          <p className="text-slate-500 mt-1 text-xs font-semibold">Bulk Apparel Platform</p>
         </div>
 
-        <div className="card p-8">
-          <h1 className="text-2xl font-bold mb-6 text-center">Create Account</h1>
+        <div className="card p-8 bg-white border-slate-200 shadow-sm">
+          <h1 className="text-2xl font-black mb-6 text-center text-slate-900">Create Account</h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="label">Business / Your Name <span className="text-gray-600">(optional)</span></label>
+              <label className="label">Business / Your Name <span className="text-slate-400 font-normal">(optional)</span></label>
               <input
                 type="text"
                 placeholder="Ravi Printers"
@@ -62,9 +62,9 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="label">Phone Number <span className="text-red-400">*</span></label>
+              <label className="label">Phone Number <span className="text-rose-600">*</span></label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">+91</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-semibold">+91</span>
                 <input
                   type="tel"
                   maxLength={10}
@@ -78,7 +78,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="label">Email <span className="text-gray-600">(optional)</span></label>
+              <label className="label">Email <span className="text-slate-400 font-normal">(optional)</span></label>
               <input
                 type="email"
                 placeholder="you@example.com"
@@ -89,7 +89,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="label">Password <span className="text-red-400">*</span></label>
+              <label className="label">Password <span className="text-rose-600">*</span></label>
               <input
                 type="password"
                 placeholder="Min. 6 characters"
@@ -102,19 +102,19 @@ export default function RegisterPage() {
             </div>
 
             {error && (
-              <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">
+              <div className="px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-800">
                 {error}
               </div>
             )}
 
-            <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base mt-2">
+            <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-sm font-bold mt-2 shadow-md">
               {loading ? 'Creating account...' : 'Create Account'}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-xs text-slate-500 mt-6 font-medium">
             Already have an account?{' '}
-            <Link href="/login" className="text-orange-400 hover:text-orange-300 font-medium">Sign in</Link>
+            <Link href="/login" className="text-orange-600 hover:text-orange-700 font-bold">Sign in</Link>
           </p>
         </div>
       </div>

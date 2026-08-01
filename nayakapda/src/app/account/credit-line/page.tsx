@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { formatINR, formatDate } from '@/lib/utils';
 
-
 interface CreditLineData {
   id: string;
   limitAmount: number;
@@ -38,26 +37,26 @@ export default function CreditLinePage() {
 
   if (loading) {
     return (
-      <div>
-        <div className="skeleton" style={{ height: 32, width: 200, marginBottom: '1.5rem' }} />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+      <div className="space-y-4">
+        <div className="skeleton h-8 w-48 rounded-lg" />
+        <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="skeleton" style={{ height: 100 }} />
+            <div key={i} className="skeleton h-24 rounded-xl" />
           ))}
         </div>
-        <div className="skeleton" style={{ height: 200 }} />
+        <div className="skeleton h-48 rounded-xl" />
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f9fafb', marginBottom: '1rem' }}>Credit Line</h1>
-        <div className="glass" style={{ padding: '3rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💳</div>
-          <p style={{ color: '#9ca3af' }}>{error ?? 'No credit line found'}</p>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+      <div className="space-y-6">
+        <h1 className="text-2xl font-black text-slate-900">Credit Line</h1>
+        <div className="card p-12 text-center bg-white border-slate-200 shadow-sm max-w-md mx-auto">
+          <div className="text-5xl mb-3">💳</div>
+          <p className="text-slate-700 font-bold text-base">{error ?? 'No credit line found'}</p>
+          <p className="text-slate-500 text-xs mt-1">
             Contact support to request a credit line for your account.
           </p>
         </div>
@@ -68,77 +67,74 @@ export default function CreditLinePage() {
   const usedPct = data.limitAmount > 0 ? Math.min((data.usedAmount / data.limitAmount) * 100, 100) : 0;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f9fafb', margin: 0 }}>Credit Line</h1>
-          <p style={{ color: '#9ca3af', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+          <h1 className="text-2xl font-black text-slate-900">Credit Line</h1>
+          <p className="text-slate-500 text-xs font-medium mt-0.5">
             Your buy-now-pay-later facility
           </p>
         </div>
         {data.usedAmount > 0 && (
-          <button onClick={() => setShowModal(true)} className="btn-primary" style={{ fontSize: '0.875rem' }}>
+          <button onClick={() => setShowModal(true)} className="btn-primary py-2 px-4 text-xs font-bold shadow-md">
             💰 Pay to Settle
           </button>
         )}
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem' }}>
-        <div className="glass" style={{ padding: '1.25rem' }}>
-          <p style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.5rem' }}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="card p-5 bg-white border-slate-200 shadow-sm">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
             Credit Limit
           </p>
-          <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f9fafb', margin: 0 }}>
+          <p className="text-xl font-black text-slate-900">
             {formatINR(data.limitAmount)}
           </p>
         </div>
-        <div className="glass" style={{ padding: '1.25rem' }}>
-          <p style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.5rem' }}>
+        <div className="card p-5 bg-white border-slate-200 shadow-sm">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
             Used
           </p>
-          <p style={{ fontSize: '1.5rem', fontWeight: 700, color: data.usedAmount > 0 ? '#f87171' : '#f9fafb', margin: 0 }}>
+          <p className={`text-xl font-black ${data.usedAmount > 0 ? 'text-rose-600' : 'text-slate-900'}`}>
             {formatINR(data.usedAmount)}
           </p>
         </div>
-        <div className="glass" style={{ padding: '1.25rem' }}>
-          <p style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.5rem' }}>
+        <div className="card p-5 bg-white border-slate-200 shadow-sm">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
             Available
           </p>
-          <p style={{ fontSize: '1.5rem', fontWeight: 700, color: data.availableAmount > 0 ? '#4ade80' : '#f87171', margin: 0 }}>
+          <p className={`text-xl font-black ${data.availableAmount > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
             {formatINR(data.availableAmount)}
           </p>
         </div>
       </div>
 
       {/* Usage bar */}
-      <div className="card" style={{ padding: '1.25rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.8rem' }}>
-          <span style={{ color: '#9ca3af' }}>Credit Utilisation</span>
-          <span style={{ color: usedPct > 80 ? '#f87171' : '#d1d5db', fontWeight: 600 }}>{usedPct.toFixed(1)}%</span>
+      <div className="card p-5 bg-white border-slate-200 shadow-sm space-y-2">
+        <div className="flex justify-between text-xs font-medium">
+          <span className="text-slate-500">Credit Utilisation</span>
+          <span className={`font-bold ${usedPct > 80 ? 'text-rose-600' : 'text-slate-800'}`}>{usedPct.toFixed(1)}%</span>
         </div>
-        <div style={{ height: 8, background: '#1f2937', borderRadius: 9999, overflow: 'hidden' }}>
+        <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
           <div
-            style={{
-              height: '100%',
-              width: `${usedPct}%`,
-              background: usedPct > 80 ? '#ef4444' : usedPct > 50 ? '#f97316' : '#22c55e',
-              borderRadius: 9999,
-              transition: 'width 0.5s ease',
-            }}
+            className={`h-full rounded-full transition-all duration-500 ${
+              usedPct > 80 ? 'bg-rose-500' : usedPct > 50 ? 'bg-orange-500' : 'bg-emerald-500'
+            }`}
+            style={{ width: `${usedPct}%` }}
           />
         </div>
       </div>
 
       {/* Transaction ledger */}
-      <div className="card" style={{ padding: '1.25rem' }}>
-        <h2 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
+      <div className="card p-5 bg-white border-slate-200 shadow-sm space-y-4">
+        <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
           Transaction History
         </h2>
         {data.transactions.length === 0 ? (
-          <p style={{ color: '#9ca3af', textAlign: 'center', padding: '2rem 0' }}>No transactions yet</p>
+          <p className="text-slate-500 text-xs font-medium text-center py-6">No transactions yet</p>
         ) : (
-          <div className="table-container">
+          <div className="table-container border-slate-200 shadow-none">
             <table className="table">
               <thead>
                 <tr>
@@ -156,11 +152,11 @@ export default function CreditLinePage() {
                         {tx.type === 'CHARGE' ? '↑ Charge' : '↓ Settlement'}
                       </span>
                     </td>
-                    <td style={{ fontWeight: 600, color: tx.type === 'CHARGE' ? '#f87171' : '#4ade80' }}>
+                    <td className={`font-bold text-xs ${tx.type === 'CHARGE' ? 'text-rose-600' : 'text-emerald-600'}`}>
                       {tx.type === 'CHARGE' ? '+' : '−'}{formatINR(tx.amount)}
                     </td>
-                    <td style={{ color: '#9ca3af', fontSize: '0.8rem' }}>{formatDate(tx.createdAt)}</td>
-                    <td style={{ color: '#d1d5db', fontSize: '0.8rem' }}>{tx.note ?? '—'}</td>
+                    <td className="text-slate-500 text-xs font-medium">{formatDate(tx.createdAt)}</td>
+                    <td className="text-slate-700 text-xs font-medium">{tx.note ?? '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -172,34 +168,26 @@ export default function CreditLinePage() {
       {/* Modal */}
       {showModal && (
         <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.7)',
-            zIndex: 999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1rem',
-          }}
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4"
           onClick={() => setShowModal(false)}
         >
           <div
-            className="card"
-            style={{ padding: '2rem', maxWidth: 400, width: '100%', textAlign: 'center' }}
+            className="card p-6 max-w-sm w-full text-center bg-white border-slate-200 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🚧</div>
-            <h3 style={{ color: '#f9fafb', fontWeight: 700, marginBottom: '0.5rem' }}>Coming Soon</h3>
-            <p style={{ color: '#9ca3af', marginBottom: '1.5rem' }}>
+            <div className="text-4xl mb-3">🚧</div>
+            <h3 className="text-slate-900 font-bold text-lg mb-1">Coming Soon</h3>
+            <p className="text-slate-500 text-xs mb-6 leading-relaxed">
               Razorpay settlement integration is coming soon. Please contact support to settle your outstanding balance.
             </p>
-            <a href="https://wa.me/919999999901" target="_blank" rel="noreferrer" className="btn-primary" style={{ marginRight: '0.75rem' }}>
-              WhatsApp Support
-            </a>
-            <button onClick={() => setShowModal(false)} className="btn-secondary">
-              Close
-            </button>
+            <div className="flex gap-2 justify-center">
+              <a href="https://wa.me/919999999901" target="_blank" rel="noreferrer" className="btn-primary py-2 px-4 text-xs font-bold">
+                WhatsApp Support
+              </a>
+              <button onClick={() => setShowModal(false)} className="btn-secondary py-2 px-4 text-xs font-bold">
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -15,10 +15,11 @@ export const GET = withCustomerAuth(async (_req: NextRequest, _ctx: any, session
   });
 
   if (!creditLine) {
-    return NextResponse.json({ data: null, message: 'No credit line assigned' });
+    return NextResponse.json({ success: true, data: null, message: 'No credit line assigned' });
   }
 
   return NextResponse.json({
+    success: true,
     data: {
       id: creditLine.id,
       limitAmount: Number(creditLine.limitAmount),

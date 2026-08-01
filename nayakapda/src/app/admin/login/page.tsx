@@ -34,15 +34,15 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 text-slate-900">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="text-3xl font-black gradient-text">NayaKapda</Link>
-          <p className="text-gray-500 mt-1 text-sm">Admin Panel</p>
+          <p className="text-slate-500 mt-1 text-xs font-semibold">Admin Panel</p>
         </div>
 
-        <div className="card p-8">
-          <h1 className="text-xl font-bold mb-6 text-center">Admin Sign In</h1>
+        <div className="card p-8 bg-white border-slate-200 shadow-sm">
+          <h1 className="text-xl font-black mb-6 text-center text-slate-900">Admin Sign In</h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -59,17 +59,17 @@ export default function AdminLoginPage() {
             </div>
 
             {error && (
-              <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-300">{error}</div>
+              <div className="px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-800">{error}</div>
             )}
 
-            <button type="submit" disabled={loading} className="btn-primary w-full py-3">
+            <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-xs font-bold shadow-md">
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-xs text-gray-600 mt-4">
-          <Link href="/" className="hover:text-gray-400">← Back to Store</Link>
+        <p className="text-center text-xs text-slate-500 mt-4 font-medium">
+          <Link href="/" className="hover:text-slate-900 font-semibold">← Back to Store</Link>
         </p>
       </div>
     </div>

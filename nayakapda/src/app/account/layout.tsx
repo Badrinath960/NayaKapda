@@ -2,6 +2,8 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
 import type { ReactNode } from 'react';
 
 export const metadata = {
@@ -44,7 +46,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     },
     {
       href: '/account/referral',
-      label: 'Referral',
+      label: 'Referral Program',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -57,65 +59,30 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   const userPhone = (session.user as any)?.phone ?? '';
 
   return (
-    <div style={{ minHeight: '100vh', background: '#030712' }}>
-      <div className="page-container" style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
-        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+      <Navbar />
+      <div className="flex-grow page-container py-8">
+        <div className="flex flex-col md:flex-row gap-6 items-start">
           {/* Sidebar */}
-          <aside
-            className="glass"
-            style={{
-              width: 240,
-              flexShrink: 0,
-              padding: '1.5rem',
-              position: 'sticky',
-              top: '5rem',
-            }}
-          >
+          <aside className="card p-5 w-full md:w-60 flex-shrink-0 bg-white border-slate-200 shadow-sm sticky top-24">
             {/* User info */}
-            <div style={{ marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <div
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: '50%',
-                  background: 'rgba(249,115,22,0.15)',
-                  border: '2px solid rgba(249,115,22,0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.25rem',
-                  fontWeight: 700,
-                  color: '#f97316',
-                  marginBottom: '0.75rem',
-                }}
-              >
+            <div className="mb-5 pb-5 border-b border-slate-200">
+              <div className="w-12 h-12 rounded-full bg-orange-50 border-2 border-orange-200 flex items-center justify-center text-lg font-black text-orange-600 mb-3">
                 {userName[0]?.toUpperCase() ?? 'U'}
               </div>
-              <p style={{ fontWeight: 600, color: '#f9fafb', fontSize: '0.9rem', margin: 0 }}>{userName}</p>
+              <p className="font-bold text-slate-900 text-sm">{userName}</p>
               {userPhone && (
-                <p style={{ color: '#9ca3af', fontSize: '0.8rem', margin: '0.2rem 0 0' }}>{userPhone}</p>
+                <p className="text-slate-500 text-xs mt-0.5 font-medium">{userPhone}</p>
               )}
             </div>
 
             {/* Nav links */}
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            <nav className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.625rem',
-                    padding: '0.625rem 0.875rem',
-                    borderRadius: '0.625rem',
-                    color: '#d1d5db',
-                    textDecoration: 'none',
-                    fontSize: '0.875rem',
-                    fontWeight: 500,
-                    transition: 'all 0.15s',
-                  }}
-                  className="account-nav-link"
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 font-semibold text-xs transition-all hover:bg-slate-100 hover:text-slate-900"
                 >
                   {link.icon}
                   {link.label}
@@ -124,11 +91,10 @@ export default async function AccountLayout({ children }: { children: ReactNode 
             </nav>
 
             {/* Quick links */}
-            <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="mt-5 pt-5 border-t border-slate-200">
               <Link
                 href="/products"
-                className="btn-primary"
-                style={{ width: '100%', fontSize: '0.8rem', padding: '0.625rem 1rem' }}
+                className="btn-primary w-full text-center block text-xs py-2.5 font-bold shadow-sm"
               >
                 Browse Products
               </Link>
@@ -136,16 +102,10 @@ export default async function AccountLayout({ children }: { children: ReactNode 
           </aside>
 
           {/* Main content */}
-          <main style={{ flex: 1, minWidth: 0 }}>{children}</main>
+          <main className="flex-1 min-w-0 w-full">{children}</main>
         </div>
       </div>
-
-      <style>{`
-        .account-nav-link:hover {
-          background: rgba(31,41,55,0.8);
-          color: #f9fafb;
-        }
-      `}</style>
+      <Footer />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { formatINR, formatDate } from '@/lib/utils';
+import { formatINR } from '@/lib/utils';
 
 type DiscountCode = {
   id: string;
@@ -68,61 +68,64 @@ export default function AdminDiscountsPage() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Discount Codes</h1>
-        <button onClick={() => setShowForm(!showForm)} className="btn-primary py-2 px-4 text-sm">
+    <div className="p-8 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-black text-slate-900">Discount Codes</h1>
+          <p className="text-slate-500 text-xs font-medium mt-0.5">Manage promotional codes & vouchers</p>
+        </div>
+        <button onClick={() => setShowForm(!showForm)} className="btn-primary py-2 px-4 text-xs font-bold shadow-md">
           {showForm ? '✕ Cancel' : '+ New Code'}
         </button>
       </div>
 
       {/* Create Form */}
       {showForm && (
-        <form onSubmit={handleCreate} className="card p-6 mb-6 grid grid-cols-2 gap-4">
-          <h3 className="col-span-2 font-semibold mb-2">Create Discount Code</h3>
+        <form onSubmit={handleCreate} className="card p-6 bg-white border-slate-200 shadow-sm grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <h3 className="sm:col-span-2 font-bold text-slate-900 text-sm mb-1">Create Discount Code</h3>
           <div>
             <label className="label">Code *</label>
-            <input type="text" className="input" placeholder="SUMMER20" value={form.code}
+            <input type="text" className="input text-xs" placeholder="SUMMER20" value={form.code}
               onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} required />
           </div>
           <div>
             <label className="label">Type *</label>
-            <select className="input" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+            <select className="input text-xs" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
               <option value="PERCENT">Percent (%)</option>
               <option value="FLAT">Flat (₹)</option>
             </select>
           </div>
           <div>
             <label className="label">Value *</label>
-            <input type="number" className="input" placeholder={form.type === 'PERCENT' ? '10' : '500'} value={form.value}
+            <input type="number" className="input text-xs" placeholder={form.type === 'PERCENT' ? '10' : '500'} value={form.value}
               onChange={(e) => setForm({ ...form, value: e.target.value })} required min={0} />
           </div>
           <div>
             <label className="label">Min Order Qty</label>
-            <input type="number" className="input" placeholder="Optional" value={form.minOrderQty}
+            <input type="number" className="input text-xs" placeholder="Optional" value={form.minOrderQty}
               onChange={(e) => setForm({ ...form, minOrderQty: e.target.value })} min={0} />
           </div>
           <div>
             <label className="label">Max Uses</label>
-            <input type="number" className="input" placeholder="Unlimited if empty" value={form.maxUses}
+            <input type="number" className="input text-xs" placeholder="Unlimited if empty" value={form.maxUses}
               onChange={(e) => setForm({ ...form, maxUses: e.target.value })} min={1} />
           </div>
           <div>
             <label className="label">Expires At</label>
-            <input type="datetime-local" className="input" value={form.expiresAt}
+            <input type="datetime-local" className="input text-xs" value={form.expiresAt}
               onChange={(e) => setForm({ ...form, expiresAt: e.target.value })} />
           </div>
-          {error && <div className="col-span-2 text-red-400 text-sm px-3 py-2 bg-red-500/10 rounded-lg">{error}</div>}
-          <div className="col-span-2">
-            <button type="submit" disabled={saving} className="btn-primary py-2 px-6">
+          {error && <div className="sm:col-span-2 text-rose-700 text-xs px-3 py-2 bg-rose-50 border border-rose-200 font-semibold rounded-lg">{error}</div>}
+          <div className="sm:col-span-2 pt-2">
+            <button type="submit" disabled={saving} className="btn-primary py-2 px-6 text-xs font-bold shadow-md">
               {saving ? 'Creating...' : 'Create Code'}
             </button>
           </div>
         </form>
       )}
 
-      <div className="card overflow-hidden">
-        <div className="table-container rounded-none border-0">
+      <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
+        <div className="table-container border-0 rounded-none shadow-none">
           <table className="table">
             <thead>
               <tr>
@@ -137,30 +140,30 @@ export default function AdminDiscountsPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={7} className="text-center py-8 text-gray-500">Loading...</td></tr>
+                <tr><td colSpan={7} className="text-center py-8 text-slate-500 text-xs font-medium">Loading...</td></tr>
               ) : discounts.length === 0 ? (
-                <tr><td colSpan={7} className="text-center py-8 text-gray-500">No discount codes</td></tr>
+                <tr><td colSpan={7} className="text-center py-8 text-slate-500 text-xs font-medium">No discount codes</td></tr>
               ) : discounts.map((d) => (
                 <tr key={d.id}>
-                  <td><span className="font-mono font-bold text-orange-400">{d.code}</span></td>
+                  <td><span className="font-mono font-bold text-orange-600 text-xs">{d.code}</span></td>
                   <td><span className="badge-gray text-xs">{d.type}</span></td>
-                  <td className="font-medium">
+                  <td className="font-bold text-slate-900 text-xs">
                     {d.type === 'PERCENT' ? `${d.value}%` : formatINR(d.value)}
                   </td>
-                  <td className="text-sm">
+                  <td className="text-xs text-slate-700 font-semibold">
                     {d.usedCount}{d.maxUses ? ` / ${d.maxUses}` : ' / ∞'}
                   </td>
-                  <td className="text-gray-400 text-sm">{d.minOrderQty ?? '—'}</td>
-                  <td className="text-gray-400 text-xs">
+                  <td className="text-slate-500 text-xs font-medium">{d.minOrderQty ?? '—'}</td>
+                  <td className="text-slate-500 text-xs font-medium">
                     {d.expiresAt ? new Date(d.expiresAt).toLocaleDateString('en-IN') : '—'}
                   </td>
                   <td>
                     <button
                       onClick={() => toggleActive(d.id, d.active)}
-                      className={`text-xs px-3 py-1 rounded-full border transition-colors ${
+                      className={`text-[10px] font-bold px-3 py-1 rounded-full border transition-colors cursor-pointer ${
                         d.active
-                          ? 'bg-green-500/10 text-green-400 border-green-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30'
-                          : 'bg-gray-800 text-gray-500 border-gray-700 hover:bg-green-500/10 hover:text-green-400'
+                          ? 'badge-green hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200'
+                          : 'badge-gray hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
                       }`}
                     >
                       {d.active ? 'Active' : 'Inactive'}

@@ -24,6 +24,7 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
   });
 
   return NextResponse.json({
+    success: true,
     data: {
       methods: available.map((m) => ({
         id: m.id,

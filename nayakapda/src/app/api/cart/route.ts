@@ -26,7 +26,7 @@ export const GET = withCustomerAuth(async (_req: NextRequest, _ctx: any, session
   });
 
   if (!cart) {
-    return NextResponse.json({ data: { items: [], subtotal: 0, itemCount: 0 } });
+    return NextResponse.json({ success: true, data: { items: [], subtotal: 0, itemCount: 0 } });
   }
 
   const items = cart.items.map((item) => ({
@@ -54,5 +54,5 @@ export const GET = withCustomerAuth(async (_req: NextRequest, _ctx: any, session
   const subtotal = items.reduce((sum, i) => sum + i.subtotal, 0);
   const itemCount = items.reduce((sum, i) => sum + i.qty, 0);
 
-  return NextResponse.json({ data: { items, subtotal, itemCount } });
+  return NextResponse.json({ success: true, data: { items, subtotal, itemCount } });
 });

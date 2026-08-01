@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { formatINR } from '@/lib/utils';
 
 interface StockVariant {
   id: string;
@@ -87,38 +86,32 @@ export default function StockPage() {
   };
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Navbar />
-      <main style={{ minHeight: '100vh', paddingBottom: '4rem' }}>
+      <main className="flex-grow">
         {/* Hero */}
-        <div
-          style={{
-            background: 'linear-gradient(135deg, rgba(249,115,22,0.08) 0%, rgba(0,0,0,0) 60%)',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
-            padding: '3rem 0 2rem',
-          }}
-        >
+        <div className="bg-white border-b border-slate-200 py-10">
           <div className="page-container">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-              <span style={{ padding: '0.25rem 0.75rem', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 9999, fontSize: '0.75rem', color: '#4ade80', fontWeight: 600 }}>
-                🟢 Live
+            <div className="flex items-center gap-3 mb-2">
+              <span className="badge-green text-xs">
+                🟢 Live Stock
               </span>
-              <span style={{ color: '#6b7280', fontSize: '0.8rem' }}>Updates every 60 seconds</span>
+              <span className="text-slate-400 text-xs font-medium">Auto-updates every 60 seconds</span>
             </div>
-            <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#f9fafb', margin: '0 0 0.5rem' }}>
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">
               Live Stock Availability
             </h1>
-            <p style={{ color: '#9ca3af', margin: 0 }}>
+            <p className="text-slate-600 text-sm font-medium">
               Real-time inventory across all products, sizes and colors
             </p>
           </div>
         </div>
 
-        <div className="page-container" style={{ paddingTop: '2rem' }}>
+        <div className="page-container py-8">
           {/* Search */}
-          <div style={{ marginBottom: '1.5rem', maxWidth: 400 }}>
+          <div className="mb-6 max-w-md">
             <input
-              className="input"
+              className="input text-xs"
               placeholder="Search by SKU, product, size or color..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -126,71 +119,72 @@ export default function StockPage() {
           </div>
 
           {loading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div className="space-y-2">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="skeleton" style={{ height: 56 }} />
+                <div key={i} className="skeleton h-14 rounded-xl" />
               ))}
             </div>
           ) : (
             <>
-              <p style={{ color: '#6b7280', fontSize: '0.8rem', marginBottom: '1rem' }}>
+              <p className="text-slate-500 text-xs font-medium mb-3">
                 Showing {filtered.length} of {variants.length} variants
               </p>
-              <div className="table-container">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>SKU</th>
-                      <th>Product</th>
-                      <th>Size</th>
-                      <th>Color</th>
-                      <th>Stock</th>
-                      <th>Alert</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.map((v) => {
-                      const isSubscribed = subscribedIds.has(v.id);
-                      return (
-                        <tr key={v.id}>
-                          <td>
-                            <span style={{ fontFamily: 'monospace', color: '#9ca3af', fontSize: '0.75rem' }}>
-                              {v.sku}
-                            </span>
-                          </td>
-                          <td style={{ fontWeight: 500, color: '#f9fafb' }}>{v.product.name}</td>
-                          <td>
-                            <span className="badge-gray">{v.size}</span>
-                          </td>
-                          <td style={{ color: '#d1d5db' }}>{v.color}</td>
-                          <td>{stockBadge(v.stockQty)}</td>
-                          <td>
-                            {v.stockQty === 0 ? (
-                              isSubscribed ? (
-                                <span className="badge-green">✓ Notified</span>
+              <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
+                <div className="table-container border-0 rounded-none shadow-none">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>SKU</th>
+                        <th>Product</th>
+                        <th>Size</th>
+                        <th>Color</th>
+                        <th>Stock</th>
+                        <th>Alert</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filtered.map((v) => {
+                        const isSubscribed = subscribedIds.has(v.id);
+                        return (
+                          <tr key={v.id}>
+                            <td>
+                              <span className="font-mono text-slate-500 text-xs font-semibold">
+                                {v.sku}
+                              </span>
+                            </td>
+                            <td className="font-bold text-slate-900 text-xs">{v.product.name}</td>
+                            <td>
+                              <span className="badge-gray">{v.size}</span>
+                            </td>
+                            <td className="text-slate-700 text-xs font-medium">{v.color}</td>
+                            <td>{stockBadge(v.stockQty)}</td>
+                            <td>
+                              {v.stockQty === 0 ? (
+                                isSubscribed ? (
+                                  <span className="badge-green">✓ Notified</span>
+                                ) : (
+                                  <button
+                                    onClick={() => handleSubscribe(v.id)}
+                                    disabled={subscribing === v.id}
+                                    className="btn-secondary py-1 px-3 text-xs font-bold"
+                                  >
+                                    {subscribing === v.id ? '...' : '🔔 Notify Me'}
+                                  </button>
+                                )
                               ) : (
-                                <button
-                                  onClick={() => handleSubscribe(v.id)}
-                                  disabled={subscribing === v.id}
-                                  className="btn-secondary"
-                                  style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}
-                                >
-                                  {subscribing === v.id ? '...' : '🔔 Notify Me'}
-                                </button>
-                              )
-                            ) : (
-                              <span style={{ color: '#4b5563', fontSize: '0.75rem' }}>—</span>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                                <span className="text-slate-400 text-xs">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
               {filtered.length === 0 && !loading && (
-                <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
+                <div className="text-center py-12 text-slate-500 text-xs font-medium">
                   No variants match your search.
                 </div>
               )}
@@ -199,6 +193,6 @@ export default function StockPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

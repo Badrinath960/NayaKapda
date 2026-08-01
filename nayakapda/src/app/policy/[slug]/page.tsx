@@ -219,8 +219,9 @@ For any queries or concerns, contact us at **support@nayakapda.com**
   },
 };
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const policy = policyContent[params.slug];
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const policy = policyContent[slug];
   if (!policy) return {};
   return {
     title: `${policy.title} — NayaKapda`,
@@ -228,18 +229,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function PolicyPage({ params }: { params: { slug: string } }) {
-  const policy = policyContent[params.slug];
+export default async function PolicyPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const policy = policyContent[slug];
   if (!policy) notFound();
 
-  // Simple markdown-like rendering: split on ## and ### headers, ** bold, and newlines
   const renderContent = (content: string) => {
     return content.split('\n').map((line, i) => {
       if (line.startsWith('## ')) {
         return (
           <h2
             key={i}
-            style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f9fafb', marginTop: '2rem', marginBottom: '0.75rem' }}
+            className="text-lg font-bold text-slate-900 mt-6 mb-2"
           >
             {line.replace('## ', '')}
           </h2>
@@ -249,7 +250,7 @@ export default function PolicyPage({ params }: { params: { slug: string } }) {
         return (
           <h3
             key={i}
-            style={{ fontSize: '1rem', fontWeight: 600, color: '#e5e7eb', marginTop: '1.25rem', marginBottom: '0.5rem' }}
+            className="text-sm font-bold text-slate-800 mt-4 mb-1"
           >
             {line.replace('### ', '')}
           </h3>
@@ -257,7 +258,7 @@ export default function PolicyPage({ params }: { params: { slug: string } }) {
       }
       if (line.startsWith('| ')) {
         return (
-          <div key={i} style={{ fontFamily: 'monospace', fontSize: '0.8rem', color: '#d1d5db', padding: '0.25rem 0' }}>
+          <div key={i} className="font-mono text-xs text-slate-600 py-1">
             {line}
           </div>
         );
@@ -265,15 +266,15 @@ export default function PolicyPage({ params }: { params: { slug: string } }) {
       if (line.startsWith('- ')) {
         const text = line.replace('- ', '');
         return (
-          <li key={i} style={{ color: '#9ca3af', marginBottom: '0.375rem', lineHeight: 1.7 }}>
-            <span dangerouslySetInnerHTML={{ __html: text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#d1d5db">$1</strong>') }} />
+          <li key={i} className="text-slate-600 text-xs mb-1.5 leading-relaxed font-medium">
+            <span dangerouslySetInnerHTML={{ __html: text.replace(/\*\*(.*?)\*\*/g, '<strong className="text-slate-900 font-bold">$1</strong>') }} />
           </li>
         );
       }
       if (line === '') return <br key={i} />;
       return (
-        <p key={i} style={{ color: '#9ca3af', lineHeight: 1.8, marginBottom: '0.25rem' }}>
-          <span dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#d1d5db">$1</strong>') }} />
+        <p key={i} className="text-slate-600 text-xs leading-relaxed mb-2 font-medium">
+          <span dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong className="text-slate-900 font-bold">$1</strong>') }} />
         </p>
       );
     });
@@ -285,52 +286,37 @@ export default function PolicyPage({ params }: { params: { slug: string } }) {
   }));
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Navbar />
-      <main style={{ minHeight: '100vh', paddingBottom: '4rem' }}>
-        <div
-          style={{
-            background: 'linear-gradient(135deg, rgba(249,115,22,0.06) 0%, transparent 50%)',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
-            padding: '3.5rem 0 2.5rem',
-          }}
-        >
+      <main className="flex-grow">
+        <div className="bg-white border-b border-slate-200 py-10">
           <div className="page-container">
-            <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#f9fafb', margin: '0 0 0.5rem' }}>
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">
               {policy.title}
             </h1>
-            <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: 0 }}>
+            <p className="text-slate-500 text-xs font-medium">
               Last updated: {formatDate(policy.updatedAt)}
             </p>
           </div>
         </div>
 
-        <div className="page-container" style={{ paddingTop: '3rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '3rem', alignItems: 'flex-start' }}>
+        <div className="page-container py-10">
+          <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8 items-start">
             {/* Sidebar nav */}
-            <aside
-              className="glass"
-              style={{ padding: '1rem', position: 'sticky', top: '5rem' }}
-            >
-              <p style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6b7280', margin: '0 0 0.75rem', padding: '0 0.5rem', fontWeight: 600 }}>
+            <aside className="card p-4 bg-white border-slate-200 shadow-sm sticky top-20">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3 px-2">
                 Legal Pages
               </p>
-              <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
+              <nav className="flex flex-col gap-1">
                 {slugToLinks.map((l) => (
                   <a
                     key={l.slug}
                     href={`/policy/${l.slug}`}
-                    style={{
-                      display: 'block',
-                      padding: '0.5rem 0.625rem',
-                      borderRadius: '0.5rem',
-                      fontSize: '0.8rem',
-                      color: l.slug === params.slug ? '#f97316' : '#9ca3af',
-                      background: l.slug === params.slug ? 'rgba(249,115,22,0.08)' : 'transparent',
-                      textDecoration: 'none',
-                      fontWeight: l.slug === params.slug ? 600 : 400,
-                      transition: 'all 0.15s',
-                    }}
+                    className={`block px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+                      l.slug === slug
+                        ? 'bg-orange-50 text-orange-600 border border-orange-200'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
                   >
                     {l.title}
                   </a>
@@ -339,8 +325,8 @@ export default function PolicyPage({ params }: { params: { slug: string } }) {
             </aside>
 
             {/* Content */}
-            <article className="card" style={{ padding: '2rem' }}>
-              <ul style={{ listStyle: 'disc', paddingLeft: '1.25rem' }}>
+            <article className="card p-8 bg-white border-slate-200 shadow-sm">
+              <ul className="list-disc pl-5">
                 {renderContent(policy.content)}
               </ul>
             </article>
@@ -348,6 +334,6 @@ export default function PolicyPage({ params }: { params: { slug: string } }) {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

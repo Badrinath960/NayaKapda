@@ -40,9 +40,9 @@ export default function ReferralPage() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="skeleton" style={{ height: 80 }} />
+          <div key={i} className="skeleton h-20 rounded-xl" />
         ))}
       </div>
     );
@@ -50,74 +50,59 @@ export default function ReferralPage() {
 
   if (!data) {
     return (
-      <div>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f9fafb' }}>Referral Program</h1>
-        <div className="glass" style={{ padding: '3rem', textAlign: 'center' }}>
-          <p style={{ color: '#9ca3af' }}>Unable to load referral data. Please try again.</p>
+      <div className="space-y-6">
+        <h1 className="text-2xl font-black text-slate-900">Referral Program</h1>
+        <div className="card p-12 text-center bg-white border-slate-200 shadow-sm max-w-md mx-auto">
+          <p className="text-slate-500 text-xs">Unable to load referral data. Please try again.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div className="space-y-6">
       <div>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f9fafb', margin: 0 }}>Referral Program</h1>
-        <p style={{ color: '#9ca3af', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+        <h1 className="text-2xl font-black text-slate-900">Referral Program</h1>
+        <p className="text-slate-500 text-xs font-medium mt-0.5">
           Earn {(data.commissionRate * 100).toFixed(0)}% commission on every referred order
         </p>
       </div>
 
       {/* Earnings banner */}
-      <div className="glass-orange" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="card p-6 bg-gradient-to-r from-orange-50 via-white to-orange-50/50 border-orange-200 shadow-sm flex items-center justify-between flex-wrap gap-4">
         <div>
-          <p style={{ color: '#fdba74', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.25rem' }}>
+          <p className="text-[10px] font-bold text-orange-900 uppercase tracking-wider mb-1">
             Total Earnings
           </p>
-          <p style={{ fontSize: '2rem', fontWeight: 800, color: '#4ade80', margin: 0 }}>
+          <p className="text-3xl font-black text-emerald-600">
             {formatINR(data.earningsTotal)}
           </p>
         </div>
         {data.earningsTotal > 0 && (
-          <button onClick={requestPayout} className="btn-primary">
+          <button onClick={requestPayout} className="btn-primary py-2.5 px-6 text-xs font-bold shadow-md">
             💸 Request Payout
           </button>
         )}
       </div>
 
       {payoutMsg && (
-        <div className="badge-green" style={{ padding: '0.75rem 1rem', borderRadius: '0.75rem', fontSize: '0.875rem' }}>
+        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-bold">
           ✓ {payoutMsg}
         </div>
       )}
 
       {/* Referral Code */}
-      <div className="card" style={{ padding: '1.5rem' }}>
-        <p style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
+      <div className="card p-6 bg-white border-slate-200 shadow-sm space-y-3">
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
           Your Referral Code
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <div
-            style={{
-              flex: 1,
-              padding: '1rem 1.5rem',
-              background: 'rgba(249,115,22,0.08)',
-              border: '2px dashed rgba(249,115,22,0.4)',
-              borderRadius: '0.75rem',
-              textAlign: 'center',
-              fontFamily: 'monospace',
-              fontSize: '1.75rem',
-              fontWeight: 800,
-              color: '#f97316',
-              letterSpacing: '0.15em',
-            }}
-          >
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex-1 p-4 bg-orange-50 border-2 border-dashed border-orange-300 rounded-xl text-center font-mono text-2xl font-black text-orange-600 tracking-wider">
             {data.code}
           </div>
           <button
             onClick={() => copy(data.code, 'code')}
-            className="btn-secondary"
-            style={{ flexShrink: 0 }}
+            className="btn-secondary py-3 px-5 text-xs font-bold"
           >
             {copied === 'code' ? '✓ Copied!' : '📋 Copy Code'}
           </button>
@@ -125,31 +110,18 @@ export default function ReferralPage() {
       </div>
 
       {/* Referral Link */}
-      <div className="card" style={{ padding: '1.5rem' }}>
-        <p style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
+      <div className="card p-6 bg-white border-slate-200 shadow-sm space-y-3">
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
           Referral Link
         </p>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div
-            style={{
-              flex: 1,
-              padding: '0.75rem 1rem',
-              background: '#1f2937',
-              borderRadius: '0.5rem',
-              fontSize: '0.8rem',
-              color: '#60a5fa',
-              wordBreak: 'break-all',
-              fontFamily: 'monospace',
-              border: '1px solid #374151',
-            }}
-          >
+        <div className="flex gap-3 items-center flex-wrap">
+          <div className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-sky-700 font-mono font-bold break-all">
             {data.link}
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+          <div className="flex gap-2 flex-shrink-0">
             <button
               onClick={() => copy(data.link, 'link')}
-              className="btn-secondary"
-              style={{ padding: '0.625rem 1rem', fontSize: '0.8rem' }}
+              className="btn-secondary py-2.5 px-4 text-xs font-bold"
             >
               {copied === 'link' ? '✓ Copied!' : '📋 Copy'}
             </button>
@@ -158,8 +130,7 @@ export default function ReferralPage() {
                 onClick={() =>
                   navigator.share({ title: 'NayaKapda', text: 'Shop bulk apparel on NayaKapda!', url: data.link })
                 }
-                className="btn-primary"
-                style={{ padding: '0.625rem 1rem', fontSize: '0.8rem' }}
+                className="btn-primary py-2.5 px-4 text-xs font-bold shadow-sm"
               >
                 Share
               </button>
@@ -169,20 +140,20 @@ export default function ReferralPage() {
       </div>
 
       {/* How it works */}
-      <div className="card" style={{ padding: '1.5rem' }}>
-        <h2 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
+      <div className="card p-6 bg-white border-slate-200 shadow-sm space-y-4">
+        <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
           How It Works
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { icon: '🔗', title: 'Share Your Link', desc: 'Share your unique referral link with friends and resellers' },
             { icon: '🛒', title: 'They Order', desc: 'When someone registers and places an order using your link' },
             { icon: '💰', title: 'You Earn', desc: `You earn ${(data.commissionRate * 100).toFixed(0)}% commission on their total order value` },
           ].map((step) => (
-            <div key={step.title} style={{ textAlign: 'center', padding: '1rem' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{step.icon}</div>
-              <p style={{ fontWeight: 600, color: '#f9fafb', margin: '0 0 0.25rem', fontSize: '0.875rem' }}>{step.title}</p>
-              <p style={{ color: '#9ca3af', fontSize: '0.8rem', margin: 0 }}>{step.desc}</p>
+            <div key={step.title} className="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+              <div className="text-3xl mb-2">{step.icon}</div>
+              <p className="font-bold text-slate-900 text-xs mb-1">{step.title}</p>
+              <p className="text-slate-500 text-[11px] font-medium leading-relaxed">{step.desc}</p>
             </div>
           ))}
         </div>
@@ -190,11 +161,11 @@ export default function ReferralPage() {
 
       {/* Earnings ledger */}
       {data.earnings.length > 0 && (
-        <div className="card" style={{ padding: '1.25rem' }}>
-          <h2 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
+        <div className="card p-5 bg-white border-slate-200 shadow-sm space-y-4">
+          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
             Earnings History
           </h2>
-          <div className="table-container">
+          <div className="table-container border-slate-200 shadow-none">
             <table className="table">
               <thead>
                 <tr>
@@ -207,11 +178,11 @@ export default function ReferralPage() {
               <tbody>
                 {data.earnings.map((e) => (
                   <tr key={e.orderId}>
-                    <td style={{ fontFamily: 'monospace', color: '#f97316', fontSize: '0.8rem' }}>
+                    <td className="font-mono text-orange-600 font-bold text-xs">
                       #{e.orderId.slice(-8).toUpperCase()}
                     </td>
-                    <td style={{ color: '#4ade80', fontWeight: 600 }}>{formatINR(e.amount)}</td>
-                    <td style={{ color: '#9ca3af', fontSize: '0.8rem' }}>{formatDate(e.createdAt)}</td>
+                    <td className="text-emerald-600 font-bold text-xs">{formatINR(e.amount)}</td>
+                    <td className="text-slate-500 text-xs font-medium">{formatDate(e.createdAt)}</td>
                     <td>
                       <span className={e.paid ? 'badge-green' : 'badge-orange'}>
                         {e.paid ? 'Paid' : 'Pending'}

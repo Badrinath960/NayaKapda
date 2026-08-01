@@ -106,7 +106,7 @@ export const addressSchema = z
 
 export const placeOrderSchema = z.object({
   addressId: z.string().cuid('Invalid address ID'),
-  shippingMethodId: z.string().cuid('Invalid shipping method ID').optional(),
+  shippingMethodId: z.string().min(1, 'Invalid shipping method ID').optional(),
   paymentMode: z.enum(['PREPAID', 'COD', 'CREDIT']),
   discountCodeId: z.string().cuid('Invalid discount code ID').optional(),
   razorpayPaymentId: z.string().optional(),

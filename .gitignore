@@ -36,3 +36,10 @@ yarn-error.log*
 # system files
 .DS_Store
 Thumbs.db
+
+# project planning & task files
+design.md
+requirements.md
+tasks.md
+nayakapda/task.md
+nayakapda/rule.md

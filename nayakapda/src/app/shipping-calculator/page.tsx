@@ -62,40 +62,34 @@ export default function ShippingCalculatorPage() {
   };
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Navbar />
-      <main style={{ minHeight: '100vh', paddingBottom: '4rem' }}>
+      <main className="flex-grow">
         {/* Hero */}
-        <div
-          style={{
-            background: 'linear-gradient(135deg, rgba(249,115,22,0.08) 0%, transparent 60%)',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
-            padding: '4rem 0 3rem',
-          }}
-        >
-          <div className="page-container" style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🚚</div>
-            <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', fontWeight: 800, color: '#f9fafb', margin: '0 0 0.75rem' }}>
+        <div className="bg-white border-b border-slate-200 py-12 text-center">
+          <div className="page-container">
+            <div className="text-5xl mb-3">🚚</div>
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">
               Shipping Calculator
             </h1>
-            <p style={{ color: '#9ca3af', maxWidth: 480, margin: '0 auto' }}>
+            <p className="text-slate-600 text-sm font-medium max-w-md mx-auto">
               Check available shipping methods and rates for your pincode before placing your bulk order.
             </p>
           </div>
         </div>
 
-        <div className="page-container" style={{ paddingTop: '3rem' }}>
-          <div style={{ maxWidth: 560, margin: '0 auto' }}>
+        <div className="page-container py-10">
+          <div className="max-w-xl mx-auto space-y-6">
             {/* Form */}
-            <div className="glass" style={{ padding: '2rem', marginBottom: '2rem' }}>
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div className="card p-8 bg-white border-slate-200 shadow-sm">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="label" htmlFor="pincode">
                     Delivery Pincode
                   </label>
                   <input
                     id="pincode"
-                    className="input"
+                    className="input text-xs"
                     type="text"
                     inputMode="numeric"
                     maxLength={6}
@@ -111,7 +105,7 @@ export default function ShippingCalculatorPage() {
                   </label>
                   <input
                     id="pieces"
-                    className="input"
+                    className="input text-xs"
                     type="number"
                     min={1}
                     placeholder="e.g. 100"
@@ -122,16 +116,15 @@ export default function ShippingCalculatorPage() {
                 </div>
 
                 {error && (
-                  <div className="badge-red" style={{ padding: '0.75rem 1rem', borderRadius: '0.75rem', fontSize: '0.875rem' }}>
+                  <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs font-bold">
                     {error}
                   </div>
                 )}
 
                 <button
                   type="submit"
-                  className="btn-primary"
+                  className="btn-primary w-full py-3 text-xs font-bold shadow-md"
                   disabled={loading}
-                  style={{ width: '100%', fontSize: '1rem', padding: '0.875rem' }}
                 >
                   {loading ? 'Calculating...' : '🔍 Calculate Shipping'}
                 </button>
@@ -140,61 +133,54 @@ export default function ShippingCalculatorPage() {
 
             {/* Results */}
             {result && (
-              <div style={{ animationName: 'fadeInUp', animationDuration: '0.4s', animationFillMode: 'both' }}>
-                <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#f9fafb', margin: 0 }}>
+              <div className="space-y-3 animate-fade-in-up">
+                <div className="flex justify-between items-center px-1">
+                  <h2 className="text-sm font-bold text-slate-900">
                     Available Methods
                   </h2>
-                  <span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>
-                    Pincode: <strong style={{ color: '#f97316' }}>{result.pincode}</strong> · {result.totalPieces} pcs
+                  <span className="text-slate-500 text-xs font-medium">
+                    Pincode: <strong className="text-orange-600">{result.pincode}</strong> · {result.totalPieces} pcs
                   </span>
                 </div>
 
                 {result.methods.length === 0 ? (
-                  <div className="glass" style={{ padding: '2rem', textAlign: 'center' }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>🚫</div>
-                    <p style={{ color: '#f87171', fontWeight: 600, marginBottom: '0.5rem' }}>
+                  <div className="card p-8 text-center bg-white border-slate-200 shadow-sm">
+                    <div className="text-4xl mb-3">🚫</div>
+                    <p className="text-rose-700 font-bold text-sm mb-1">
                       No shipping available for this pincode
                     </p>
-                    <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>
+                    <p className="text-slate-500 text-xs mb-4 font-medium">
                       Contact us on WhatsApp for custom shipping arrangements.
                     </p>
                     <a
                       href="https://wa.me/919999999901"
                       target="_blank"
                       rel="noreferrer"
-                      className="btn-primary"
-                      style={{ marginTop: '1rem', fontSize: '0.875rem' }}
+                      className="btn-primary py-2 px-4 text-xs font-bold shadow-md"
                     >
                       WhatsApp Us
                     </a>
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div className="space-y-3">
                     {result.methods.map((method, i) => (
                       <div
                         key={method.id}
-                        className="card"
-                        style={{
-                          padding: '1.25rem',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: '1rem',
-                          border: i === 0 ? '1px solid rgba(249,115,22,0.3)' : undefined,
-                        }}
+                        className={`card p-5 flex items-center justify-between gap-4 bg-white border-slate-200 shadow-sm ${
+                          i === 0 ? 'border-orange-300 bg-orange-50/40' : ''
+                        }`}
                       >
                         <div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                            <p style={{ fontWeight: 600, color: '#f9fafb', margin: 0 }}>{method.name}</p>
-                            {i === 0 && <span className="badge-orange">Recommended</span>}
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-bold text-slate-900 text-sm">{method.name}</p>
+                            {i === 0 && <span className="badge-orange text-[10px] font-bold">Recommended</span>}
                           </div>
-                          <p style={{ color: '#9ca3af', fontSize: '0.8rem', margin: 0 }}>
+                          <p className="text-slate-500 text-xs font-medium">
                             🕐 {method.etaText}
                           </p>
                         </div>
-                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                          <p style={{ fontSize: '1.25rem', fontWeight: 700, color: method.cost === 0 ? '#4ade80' : '#f97316', margin: 0 }}>
+                        <div className="text-right flex-shrink-0">
+                          <p className={`text-lg font-black ${method.cost === 0 ? 'text-emerald-600' : 'text-orange-600'}`}>
                             {method.cost === 0 ? 'Free' : formatINR(method.cost)}
                           </p>
                         </div>
@@ -207,17 +193,17 @@ export default function ShippingCalculatorPage() {
 
             {/* Info cards */}
             {!result && !loading && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '0.5rem' }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
                   { icon: '⚡', title: 'Fast Dispatch', desc: 'Orders confirmed before 2 PM ship same day' },
                   { icon: '📦', title: 'Bulk Friendly', desc: 'Special rates for orders above 500 pieces' },
                   { icon: '🗺️', title: 'Pan India', desc: 'We ship to all 29 states and UTs' },
                   { icon: '🔍', title: 'Tracking', desc: 'Real-time tracking after dispatch' },
                 ].map((card) => (
-                  <div key={card.title} className="glass" style={{ padding: '1.25rem' }}>
-                    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{card.icon}</div>
-                    <p style={{ fontWeight: 600, color: '#f9fafb', margin: '0 0 0.25rem', fontSize: '0.875rem' }}>{card.title}</p>
-                    <p style={{ color: '#9ca3af', fontSize: '0.8rem', margin: 0 }}>{card.desc}</p>
+                  <div key={card.title} className="card p-4 bg-white border-slate-200 shadow-xs">
+                    <div className="text-2xl mb-2">{card.icon}</div>
+                    <p className="font-bold text-slate-900 text-xs mb-0.5">{card.title}</p>
+                    <p className="text-slate-500 text-[11px] font-medium leading-relaxed">{card.desc}</p>
                   </div>
                 ))}
               </div>
@@ -226,6 +212,6 @@ export default function ShippingCalculatorPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

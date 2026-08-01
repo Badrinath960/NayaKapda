@@ -20,10 +20,8 @@ export default async function ProductVideosPage() {
   });
 
   const getEmbedUrl = (url: string) => {
-    // Handle YouTube URLs
     const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([^&?\/]+)/);
     if (ytMatch) return `https://www.youtube-nocookie.com/embed/${ytMatch[1]}`;
-    // Return as-is for direct video URLs
     return url;
   };
 
@@ -31,47 +29,35 @@ export default async function ProductVideosPage() {
   const isDirectVideo = (url: string) => /\.(mp4|webm|ogg)(\?|$)/i.test(url);
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Navbar />
-      <main style={{ minHeight: '100vh', paddingBottom: '4rem' }}>
+      <main className="flex-grow">
         {/* Hero */}
-        <div
-          style={{
-            background: 'linear-gradient(135deg, rgba(249,115,22,0.08) 0%, transparent 60%)',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
-            padding: '4rem 0 3rem',
-          }}
-        >
-          <div className="page-container" style={{ textAlign: 'center' }}>
-            <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', fontWeight: 800, color: '#f9fafb', margin: '0 0 0.75rem' }}>
+        <div className="bg-white border-b border-slate-200 py-12 text-center">
+          <div className="page-container">
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">
               🎬 Product Videos
             </h1>
-            <p style={{ color: '#9ca3af', margin: 0 }}>
+            <p className="text-slate-600 text-sm font-medium">
               See our fabrics in action — quality demonstrations, unboxings, and print results
             </p>
           </div>
         </div>
 
-        <div className="page-container" style={{ paddingTop: '3rem' }}>
+        <div className="page-container py-10">
           {videos.length === 0 ? (
-            <div className="glass" style={{ padding: '4rem', textAlign: 'center', maxWidth: 500, margin: '0 auto' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎬</div>
-              <h2 style={{ color: '#f9fafb', fontWeight: 700, marginBottom: '0.5rem' }}>No Videos Yet</h2>
-              <p style={{ color: '#9ca3af', marginBottom: '1.5rem' }}>
+            <div className="card p-12 text-center bg-white border-slate-200 shadow-sm max-w-md mx-auto space-y-4">
+              <div className="text-5xl">🎬</div>
+              <h2 className="text-lg font-bold text-slate-900">No Videos Yet</h2>
+              <p className="text-slate-500 text-xs font-medium">
                 Product videos will appear here once added. Check back soon!
               </p>
-              <Link href="/products" className="btn-primary">
+              <Link href="/products" className="btn-primary py-2.5 px-6 text-xs font-bold shadow-md">
                 Browse Products
               </Link>
             </div>
           ) : (
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                gap: '1.5rem',
-              }}
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {videos.map((video) => {
                 const embedUrl = getEmbedUrl(video.url);
                 const isYT = isYouTube(video.url);
@@ -80,69 +66,37 @@ export default async function ProductVideosPage() {
                 return (
                   <div
                     key={video.id}
-                    className="card"
-                    style={{ overflow: 'hidden', transition: 'transform 0.2s, box-shadow 0.2s' }}
+                    className="card overflow-hidden bg-white border-slate-200 shadow-sm flex flex-col"
                   >
                     {/* Video embed */}
-                    <div style={{ position: 'relative', paddingTop: '56.25%', background: '#000' }}>
+                    <div className="relative aspect-video bg-black">
                       {isYT ? (
                         <iframe
                           src={embedUrl}
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
-                          style={{
-                            position: 'absolute',
-                            inset: 0,
-                            width: '100%',
-                            height: '100%',
-                            border: 'none',
-                          }}
+                          className="absolute inset-0 w-full h-full border-none"
                           title={video.title ?? video.product.name}
                         />
                       ) : isDirect ? (
                         <video
                           src={video.url}
                           controls
-                          style={{
-                            position: 'absolute',
-                            inset: 0,
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                          }}
+                          className="absolute inset-0 w-full h-full object-cover"
                         />
                       ) : (
                         <a
                           href={video.url}
                           target="_blank"
                           rel="noreferrer"
-                          style={{
-                            position: 'absolute',
-                            inset: 0,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            background: 'rgba(249,115,22,0.08)',
-                            textDecoration: 'none',
-                          }}
+                          className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/10 hover:bg-slate-900/20 transition-colors text-decoration-none"
                         >
-                          <div
-                            style={{
-                              width: 64,
-                              height: 64,
-                              borderRadius: '50%',
-                              background: '#f97316',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <svg width={28} height={28} fill="white" viewBox="0 0 24 24">
+                          <div className="w-16 h-16 rounded-full bg-orange-500 flex items-center justify-center shadow-lg">
+                            <svg className="w-7 h-7 fill-white ml-0.5" viewBox="0 0 24 24">
                               <path d="M8 5v14l11-7z" />
                             </svg>
                           </div>
-                          <p style={{ color: '#9ca3af', fontSize: '0.75rem', marginTop: '0.75rem' }}>
+                          <p className="text-slate-700 text-xs font-bold mt-2">
                             Click to watch
                           </p>
                         </a>
@@ -150,18 +104,18 @@ export default async function ProductVideosPage() {
                     </div>
 
                     {/* Info */}
-                    <div style={{ padding: '1rem' }}>
-                      <p style={{ fontWeight: 600, color: '#f9fafb', margin: '0 0 0.25rem', fontSize: '0.9rem' }}>
+                    <div className="p-4 flex flex-col flex-1 justify-between gap-2">
+                      <p className="font-bold text-slate-900 text-sm leading-tight">
                         {video.title ?? `${video.product.name} — Demo`}
                       </p>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                      <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
                         <Link
                           href={`/products/${video.product.slug}`}
-                          style={{ color: '#f97316', fontSize: '0.8rem', textDecoration: 'none', fontWeight: 500 }}
+                          className="text-orange-600 hover:underline text-xs font-bold"
                         >
                           {video.product.name} →
                         </Link>
-                        <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>
+                        <span className="text-slate-400 text-[10px] font-medium">
                           {formatDate(video.createdAt)}
                         </span>
                       </div>
@@ -174,6 +128,6 @@ export default async function ProductVideosPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

@@ -38,69 +38,32 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Navbar />
-      <main style={{ minHeight: '100vh', paddingBottom: '4rem' }}>
+      <main className="flex-grow">
         {/* Hero */}
-        <div
-          style={{
-            background: 'linear-gradient(160deg, rgba(249,115,22,0.12) 0%, rgba(251,191,36,0.04) 40%, transparent 70%)',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
-            padding: '5rem 0 4rem',
-          }}
-        >
-          <div className="page-container" style={{ textAlign: 'center' }}>
-            <span
-              className="badge-orange"
-              style={{ marginBottom: '1.5rem', display: 'inline-flex', padding: '0.375rem 1rem', borderRadius: '9999px', fontSize: '0.8rem' }}
-            >
+        <div className="bg-white border-b border-slate-200 py-16 text-center">
+          <div className="page-container">
+            <span className="badge-orange text-xs font-bold px-3 py-1 mb-4 inline-block">
               Est. 2019 · Made in India 🇮🇳
             </span>
-            <h1
-              style={{
-                fontSize: 'clamp(2.25rem, 6vw, 4rem)',
-                fontWeight: 900,
-                margin: '0 0 1.25rem',
-                lineHeight: 1.1,
-              }}
-            >
-              About{' '}
-              <span className="gradient-text">NayaKapda</span>
+            <h1 className="text-4xl sm:text-5xl font-black text-slate-900 mb-3 leading-tight">
+              About <span className="gradient-text">NayaKapda</span>
             </h1>
-            <p
-              style={{
-                color: '#9ca3af',
-                fontSize: '1.125rem',
-                maxWidth: 600,
-                margin: '0 auto',
-                lineHeight: 1.7,
-              }}
-            >
-              India's dedicated bulk apparel platform built for screen printers, DTF printers, embroiderers, and resellers who need consistent quality at trade prices.
+            <p className="text-slate-600 text-base max-w-xl mx-auto leading-relaxed font-medium">
+              India&apos;s dedicated bulk apparel platform built for screen printers, DTF printers, embroiderers, and resellers who need consistent quality at trade prices.
             </p>
           </div>
         </div>
 
         {/* Stats */}
-        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', padding: '3rem 0' }}>
+        <div className="border-b border-slate-200 bg-slate-50 py-10">
           <div className="page-container">
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-                gap: '2rem',
-                textAlign: 'center',
-              }}
-            >
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
               {stats.map((stat) => (
-                <div key={stat.label}>
-                  <p
-                    className="gradient-text"
-                    style={{ fontSize: '2.5rem', fontWeight: 900, margin: '0 0 0.25rem', lineHeight: 1 }}
-                  >
-                    {stat.value}
-                  </p>
-                  <p style={{ color: '#9ca3af', fontSize: '0.875rem', margin: 0 }}>{stat.label}</p>
+                <div key={stat.label} className="card p-4 bg-white border-slate-200 shadow-xs">
+                  <p className="text-3xl font-black text-orange-600 mb-1">{stat.value}</p>
+                  <p className="text-slate-500 text-xs font-medium">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -108,21 +71,14 @@ export default function AboutPage() {
         </div>
 
         {/* Story */}
-        <div className="section">
+        <div className="section bg-white border-b border-slate-200">
           <div className="page-container">
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: '3rem',
-                alignItems: 'center',
-              }}
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#f9fafb', marginBottom: '1rem', lineHeight: 1.2 }}>
+                <h2 className="text-3xl font-black text-slate-900 mb-4">
                   Our Story
                 </h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', color: '#9ca3af', lineHeight: 1.8 }}>
+                <div className="space-y-4 text-slate-600 text-xs leading-relaxed font-medium">
                   <p>
                     NayaKapda was born out of frustration. Our founders ran a screen printing shop and kept running into the same problem: sourcing quality blank T-shirts in bulk, at consistent quality, at fair prices — was a nightmare.
                   </p>
@@ -136,31 +92,21 @@ export default function AboutPage() {
               </div>
 
               {/* Visual */}
-              <div className="glass-orange" style={{ padding: '2.5rem', textAlign: 'center' }}>
-                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>👕</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div className="card p-8 text-center bg-orange-50/60 border-orange-200 shadow-sm space-y-4">
+                <div className="text-5xl">👕</div>
+                <div className="space-y-2">
                   {[
                     '100% ring-spun cotton options',
-                    'GSM range: 160 to 240',
+                    'GSM range: 180 to 320',
                     'Sizes XS to 5XL available',
                     'Minimum 10 pieces per SKU',
                     'Pantone-matched colors',
                   ].map((feature) => (
                     <div
                       key={feature}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.625rem',
-                        padding: '0.5rem 0.75rem',
-                        background: 'rgba(0,0,0,0.2)',
-                        borderRadius: '0.5rem',
-                        fontSize: '0.875rem',
-                        color: '#d1d5db',
-                        textAlign: 'left',
-                      }}
+                      className="flex items-center gap-2 p-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 font-semibold shadow-xs"
                     >
-                      <span style={{ color: '#f97316', flexShrink: 0 }}>✓</span>
+                      <span className="text-orange-600 font-bold">✓</span>
                       {feature}
                     </div>
                   ))}
@@ -171,31 +117,17 @@ export default function AboutPage() {
         </div>
 
         {/* Values */}
-        <div style={{ background: 'rgba(17,24,39,0.5)', padding: '4rem 0' }}>
+        <div className="section bg-slate-50">
           <div className="page-container">
-            <h2
-              style={{
-                fontSize: '1.75rem',
-                fontWeight: 800,
-                color: '#f9fafb',
-                textAlign: 'center',
-                marginBottom: '2.5rem',
-              }}
-            >
+            <h2 className="text-2xl font-black text-slate-900 text-center mb-10">
               Why Choose NayaKapda
             </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {values.map((val) => (
-                <div
-                  key={val.title}
-                  className="card"
-                  style={{ padding: '1.75rem', transition: 'border-color 0.2s, transform 0.2s' }}
-                >
-                  <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>{val.icon}</div>
-                  <h3 style={{ fontWeight: 700, color: '#f9fafb', margin: '0 0 0.5rem', fontSize: '1rem' }}>
-                    {val.title}
-                  </h3>
-                  <p style={{ color: '#9ca3af', fontSize: '0.875rem', lineHeight: 1.7, margin: 0 }}>{val.desc}</p>
+                <div key={val.title} className="card p-6 bg-white border-slate-200 shadow-sm space-y-2">
+                  <div className="text-3xl mb-1">{val.icon}</div>
+                  <h3 className="font-bold text-slate-900 text-sm">{val.title}</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed font-medium">{val.desc}</p>
                 </div>
               ))}
             </div>
@@ -203,29 +135,20 @@ export default function AboutPage() {
         </div>
 
         {/* Mission */}
-        <div className="section">
-          <div className="page-container" style={{ textAlign: 'center' }}>
-            <div className="glass" style={{ padding: '3rem', maxWidth: 700, margin: '0 auto' }}>
-              <p style={{ fontSize: '0.75rem', color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem', fontWeight: 600 }}>
+        <div className="section bg-white border-t border-slate-200">
+          <div className="page-container text-center">
+            <div className="card p-10 max-w-2xl mx-auto bg-gradient-to-r from-orange-50 via-white to-orange-50 border-orange-200 shadow-sm space-y-4">
+              <p className="text-[10px] font-bold text-orange-900 uppercase tracking-wider">
                 Our Mission
               </p>
-              <blockquote
-                style={{
-                  fontSize: 'clamp(1.1rem, 2.5vw, 1.375rem)',
-                  fontWeight: 700,
-                  color: '#f9fafb',
-                  lineHeight: 1.6,
-                  margin: '0 0 1.5rem',
-                  fontStyle: 'italic',
-                }}
-              >
+              <blockquote className="text-lg sm:text-xl font-bold text-slate-900 leading-relaxed italic">
                 &quot;To make premium blank apparel accessible to every printer and reseller in India — without minimum order anxiety, without quality surprises.&quot;
               </blockquote>
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <a href="/products" className="btn-primary">
+              <div className="flex gap-3 justify-center pt-2">
+                <a href="/products" className="btn-primary py-2.5 px-6 text-xs font-bold shadow-md">
                   Browse Products
                 </a>
-                <a href="/contact" className="btn-secondary">
+                <a href="/contact" className="btn-secondary py-2.5 px-6 text-xs font-bold">
                   Contact Us
                 </a>
               </div>
@@ -234,6 +157,6 @@ export default function AboutPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

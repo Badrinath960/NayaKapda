@@ -189,6 +189,15 @@ export const GET = withCustomerAuth(async (_req: NextRequest, _ctx: any, session
       courierName: o.courierName,
       createdAt: o.createdAt,
       itemCount: o.items.reduce((s, i) => s + i.qty, 0),
+      address: o.address ? {
+        name: o.address.name,
+        line1: o.address.line1,
+        city: o.address.city,
+        state: o.address.state,
+        pincode: o.address.pincode,
+        country: o.address.country,
+        phone: o.address.phone,
+      } : null,
       items: o.items.map((i) => ({
         id: i.id,
         productName: i.variant.product.name,

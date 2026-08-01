@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { formatINR, formatDate } from '@/lib/utils';
+import { formatINR } from '@/lib/utils';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = { title: 'Analytics — NayaKapda Admin' };
@@ -66,39 +66,39 @@ export default async function AdminAnalyticsPage() {
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Analytics</h1>
-        <p className="text-gray-500 text-sm mt-1">Last 30 days overview</p>
+        <h1 className="text-2xl font-black text-slate-900">Analytics</h1>
+        <p className="text-slate-500 text-xs font-medium mt-0.5">Last 30 days overview</p>
       </div>
 
       {/* KPI Totals */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="card p-6">
-          <p className="text-sm text-gray-500 mb-1">Total Revenue (30d)</p>
-          <p className="text-3xl font-black gradient-text">{formatINR(totalRevenue)}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="card p-6 bg-white border-slate-200 shadow-sm">
+          <p className="text-xs text-slate-500 font-medium mb-1">Total Revenue (30d)</p>
+          <p className="text-3xl font-black text-orange-600">{formatINR(totalRevenue)}</p>
         </div>
-        <div className="card p-6">
-          <p className="text-sm text-gray-500 mb-1">Total Orders (30d)</p>
-          <p className="text-3xl font-black text-blue-400">{totalOrders}</p>
+        <div className="card p-6 bg-white border-slate-200 shadow-sm">
+          <p className="text-xs text-slate-500 font-medium mb-1">Total Orders (30d)</p>
+          <p className="text-3xl font-black text-sky-600">{totalOrders}</p>
         </div>
       </div>
 
       {/* Top Products */}
-      <div className="card overflow-hidden">
-        <div className="p-5 border-b border-gray-800 font-semibold">Top Products by Revenue</div>
-        <div className="table-container rounded-none border-0">
+      <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
+        <div className="p-5 border-b border-slate-200 font-bold text-slate-900 text-sm">Top Products by Revenue</div>
+        <div className="table-container rounded-none border-0 shadow-none">
           <table className="table">
             <thead>
               <tr><th>#</th><th>Product</th><th>Units Sold</th><th>Revenue</th></tr>
             </thead>
             <tbody>
               {topProducts.length === 0 ? (
-                <tr><td colSpan={4} className="text-center py-6 text-gray-500">No data</td></tr>
+                <tr><td colSpan={4} className="text-center py-6 text-slate-500 text-xs font-medium">No data</td></tr>
               ) : topProducts.map((p, i) => (
                 <tr key={p.productName}>
-                  <td className="text-gray-500 font-mono">{i + 1}</td>
-                  <td className="font-medium">{p.productName}</td>
-                  <td>{Number(p.units).toLocaleString()}</td>
-                  <td className="font-bold gradient-text">{formatINR(p.revenue)}</td>
+                  <td className="text-slate-400 font-mono text-xs">{i + 1}</td>
+                  <td className="font-bold text-slate-900 text-xs">{p.productName}</td>
+                  <td className="text-slate-700 text-xs font-semibold">{Number(p.units).toLocaleString()}</td>
+                  <td className="font-black text-orange-600 text-xs">{formatINR(p.revenue)}</td>
                 </tr>
               ))}
             </tbody>
@@ -107,21 +107,21 @@ export default async function AdminAnalyticsPage() {
       </div>
 
       {/* Daily Trend */}
-      <div className="card p-6">
-        <h3 className="font-semibold mb-4">Daily Revenue Trend</h3>
-        <div className="overflow-x-auto">
+      <div className="card p-6 bg-white border-slate-200 shadow-sm space-y-4">
+        <h3 className="font-bold text-slate-900 text-sm">Daily Revenue Trend</h3>
+        <div className="table-container border-slate-200 shadow-none">
           <table className="table w-full">
             <thead>
               <tr><th>Date</th><th>Units Sold</th><th>Revenue</th></tr>
             </thead>
             <tbody>
               {salesTrend.length === 0 ? (
-                <tr><td colSpan={3} className="text-center py-6 text-gray-500">No sales in this period</td></tr>
+                <tr><td colSpan={3} className="text-center py-6 text-slate-500 text-xs font-medium">No sales in this period</td></tr>
               ) : salesTrend.map((row) => (
                 <tr key={String(row.date)}>
-                  <td className="text-gray-400 text-sm">{new Date(row.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</td>
-                  <td>{Number(row.units).toLocaleString()}</td>
-                  <td className="font-medium">{formatINR(row.revenue)}</td>
+                  <td className="text-slate-500 text-xs font-medium">{new Date(row.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</td>
+                  <td className="text-slate-700 text-xs font-semibold">{Number(row.units).toLocaleString()}</td>
+                  <td className="font-bold text-slate-900 text-xs">{formatINR(row.revenue)}</td>
                 </tr>
               ))}
             </tbody>
@@ -131,9 +131,9 @@ export default async function AdminAnalyticsPage() {
 
       {/* Discount Report */}
       {discountReport.length > 0 && (
-        <div className="card overflow-hidden">
-          <div className="p-5 border-b border-gray-800 font-semibold">Discount Code Performance</div>
-          <div className="table-container rounded-none border-0">
+        <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
+          <div className="p-5 border-b border-slate-200 font-bold text-slate-900 text-sm">Discount Code Performance</div>
+          <div className="table-container rounded-none border-0 shadow-none">
             <table className="table">
               <thead>
                 <tr><th>Code</th><th>Uses</th><th>Total Discount Given</th><th>Revenue Generated</th></tr>
@@ -141,10 +141,10 @@ export default async function AdminAnalyticsPage() {
               <tbody>
                 {discountReport.map((d) => (
                   <tr key={d.code}>
-                    <td><span className="font-mono text-orange-400">{d.code}</span></td>
-                    <td>{Number(d.uses)}</td>
-                    <td className="text-red-400">{formatINR(d.totalDiscount)}</td>
-                    <td className="font-bold gradient-text">{formatINR(d.revenue)}</td>
+                    <td><span className="font-mono font-bold text-orange-600 text-xs">{d.code}</span></td>
+                    <td className="text-slate-700 text-xs font-semibold">{Number(d.uses)}</td>
+                    <td className="text-rose-600 font-bold text-xs">{formatINR(d.totalDiscount)}</td>
+                    <td className="font-black text-orange-600 text-xs">{formatINR(d.revenue)}</td>
                   </tr>
                 ))}
               </tbody>
