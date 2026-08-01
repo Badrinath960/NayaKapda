@@ -24,27 +24,47 @@ export default function AdminCustomersPage() {
 
   const fetchCustomers = async () => {
     setLoading(true);
-    const params = new URLSearchParams({ page: String(page), limit: '20' });
-    if (search) params.set('search', search);
-    const res = await fetch(`/api/admin/customers?${params}`);
-    const data = await res.json();
-    if (data.data) { setCustomers(data.data.customers); setTotal(data.data.total); }
-    setLoading(false);
+    try {
+      const params = new URLSearchParams({ page: String(page), limit: '20' });
+      if (search) params.set('search', search);
+      const res = await fetch(`/api/admin/customers?${params}`);
+      if (!res.ok) {
+        setCustomers([]);
+        setTotal(0);
+        return;
+      }
+      const data = await res.json();
+      if (data?.data) {
+        setCustomers(data.data.customers ?? []);
+        setTotal(data.data.total ?? 0);
+      }
+    } catch {
+      setCustomers([]);
+      setTotal(0);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { fetchCustomers(); }, [page, search]);
+  useEffect(() => {
+    fetchCustomers();
+  }, [page, search]);
 
   return (
     <div className="p-8 space-y-6">
       <div>
         <h1 className="text-2xl font-black text-slate-900">Customers</h1>
-        <p className="text-slate-500 text-xs font-medium mt-0.5">{total} customers</p>
+        <p className="text-slate-500 text-xs font-medium mt-0.5">{total} customer{total !== 1 ? 's' : ''}</p>
       </div>
 
       <div className="mb-4">
-        <input type="text" placeholder="Search by name or phone..." value={search}
+        <input
+          type="text"
+          placeholder="Search by name, phone or email..."
+          value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="input py-2 px-4 text-xs w-72" />
+          className="input py-2 px-4 text-xs w-72"
+        />
       </div>
 
       <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
@@ -56,52 +76,64 @@ export default function AdminCustomersPage() {
                 <th>Phone</th>
                 <th>Orders</th>
                 <th>Total Spent</th>
-                <th>Credit</th>
+                <th>Credit Line</th>
                 <th>Joined</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={7} className="text-center py-8 text-slate-500 text-xs font-medium">Loading...</td></tr>
-              ) : customers.length === 0 ? (
-                <tr><td colSpan={7} className="text-center py-8 text-slate-500 text-xs font-medium">No customers found</td></tr>
-              ) : customers.map((c) => (
-                <tr key={c.id}>
-                  <td>
-                    <div className="font-bold text-slate-900 text-xs">{c.name ?? 'Unknown'}</div>
-                    {c.email && <div className="text-[10px] text-slate-500 font-medium">{c.email}</div>}
-                  </td>
-                  <td className="font-mono text-xs font-semibold text-slate-700">{c.phone}</td>
-                  <td className="text-slate-700 text-xs font-semibold">{c._count.orders}</td>
-                  <td className="font-bold text-slate-900 text-xs">{formatINR(c.totalOrderValue)}</td>
-                  <td>
-                    {c.creditLine ? (
-                      <div className="text-xs">
-                        <span className="text-slate-500 font-medium">Used: </span>
-                        <span className="font-bold text-rose-600">{formatINR(Number(c.creditLine.usedAmount))}</span>
-                        <span className="text-slate-400 font-medium"> / {formatINR(Number(c.creditLine.limitAmount))}</span>
-                      </div>
-                    ) : (
-                      <span className="text-slate-400 text-xs">—</span>
-                    )}
-                  </td>
-                  <td className="text-slate-500 text-xs font-medium">{formatDate(c.createdAt)}</td>
-                  <td>
-                    <Link href={`/admin/customers/${c.id}`} className="text-orange-600 hover:underline text-xs font-bold">View →</Link>
+                <tr>
+                  <td colSpan={7} className="text-center py-8 text-slate-500 text-xs font-medium">
+                    Loading customer directory...
                   </td>
                 </tr>
-              ))}
+              ) : customers.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-8 text-slate-500 text-xs font-medium">
+                    No customers found
+                  </td>
+                </tr>
+              ) : (
+                customers.map((c) => (
+                  <tr key={c.id}>
+                    <td>
+                      <div>
+                        <p className="font-bold text-slate-900 text-xs">{c.name ?? 'Unregistered Guest'}</p>
+                        {c.email && <p className="text-[10px] text-slate-500 font-medium">{c.email}</p>}
+                      </div>
+                    </td>
+                    <td className="font-mono text-xs font-semibold text-slate-700">{c.phone}</td>
+                    <td>
+                      <span className="badge-blue text-xs font-semibold">{c._count?.orders ?? 0} orders</span>
+                    </td>
+                    <td className="font-bold text-emerald-600 text-xs">{formatINR(c.totalOrderValue)}</td>
+                    <td>
+                      {c.creditLine ? (
+                        <div className="text-xs">
+                          <span className="font-semibold text-slate-700">
+                            {formatINR(c.creditLine.usedAmount)} / {formatINR(c.creditLine.limitAmount)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-slate-400 text-xs font-medium">—</span>
+                      )}
+                    </td>
+                    <td className="text-slate-500 text-xs font-medium">{formatDate(c.createdAt)}</td>
+                    <td>
+                      <Link
+                        href={`/admin/customers/${c.id}`}
+                        className="btn-ghost py-1 px-3 text-xs font-bold text-orange-600 hover:text-orange-700"
+                      >
+                        View Details →
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
-        {Math.ceil(total / 20) > 1 && (
-          <div className="flex items-center justify-center gap-3 p-4 border-t border-slate-200">
-            <button onClick={() => setPage(p => p - 1)} disabled={page === 1} className="btn-ghost py-1 px-3 text-xs font-bold disabled:opacity-30">← Prev</button>
-            <span className="text-xs font-semibold text-slate-500">Page {page} of {Math.ceil(total / 20)}</span>
-            <button onClick={() => setPage(p => p + 1)} disabled={page === Math.ceil(total / 20)} className="btn-ghost py-1 px-3 text-xs font-bold disabled:opacity-30">Next →</button>
-          </div>
-        )}
       </div>
     </div>
   );
