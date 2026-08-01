@@ -24,12 +24,26 @@ export default function AdminProductsPage() {
 
   const fetchProducts = async () => {
     setLoading(true);
-    const params = new URLSearchParams({ page: String(page), limit: '20' });
-    if (search) params.set('search', search);
-    const res = await fetch(`/api/admin/products?${params}`);
-    const data = await res.json();
-    if (data.data) { setProducts(data.data.products); setTotal(data.data.total); }
-    setLoading(false);
+    try {
+      const params = new URLSearchParams({ page: String(page), limit: '20' });
+      if (search) params.set('search', search);
+      const res = await fetch(`/api/admin/products?${params}`);
+      if (!res.ok) {
+        setProducts([]);
+        setTotal(0);
+        return;
+      }
+      const data = await res.json();
+      if (data?.data) {
+        setProducts(data.data.products ?? []);
+        setTotal(data.data.total ?? 0);
+      }
+    } catch {
+      setProducts([]);
+      setTotal(0);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchProducts(); }, [page, search]);
