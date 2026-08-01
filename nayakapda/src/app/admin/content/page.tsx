@@ -94,6 +94,25 @@ export default function AdminContentPage() {
     fetchData();
   };
 
+  const startEditShipping = (m: ShippingMethod) => {
+    setEditId(m.id);
+    setShippingForm({
+      name: m.name,
+      description: m.description || '',
+      etaText: m.etaText || '',
+      cost: String(m.cost),
+      regionLimited: m.regionLimited,
+      active: m.active,
+    });
+    setShowShippingForm(true);
+  };
+
+  const deleteShipping = async (id: string) => {
+    if (!confirm('Delete this shipping method?')) return;
+    await fetch(`/api/admin/shipping-methods/${id}`, { method: 'DELETE' });
+    fetchData();
+  };
+
   return (
     <div className="p-8">
       <div className="mb-6">
@@ -212,29 +231,37 @@ export default function AdminContentPage() {
             <div className="table-container rounded-none border-0">
               <table className="table">
                 <thead>
-                  <tr><th>Name</th><th>Cost</th><th>ETA</th><th>Region Limited</th><th>Status</th></tr>
+                  <tr><th>Name</th><th>Cost</th><th>ETA</th><th>Region Limited</th><th>Status</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
                   {loading ? (
-                    <tr><td colSpan={5} className="text-center py-6 text-gray-500">Loading...</td></tr>
+                    <tr><td colSpan={6} className="text-center py-6 text-slate-400 text-xs font-medium">Loading...</td></tr>
                   ) : shippingMethods.length === 0 ? (
-                    <tr><td colSpan={5} className="text-center py-6 text-gray-500">No methods</td></tr>
+                    <tr><td colSpan={6} className="text-center py-6 text-slate-400 text-xs font-medium">No methods</td></tr>
                   ) : shippingMethods.map((m) => (
                     <tr key={m.id}>
                       <td>
-                        <div className="font-medium">{m.name}</div>
-                        {m.description && <div className="text-xs text-gray-500">{m.description}</div>}
+                        <div className="font-bold text-slate-900 text-xs">{m.name}</div>
+                        {m.description && <div className="text-[10px] text-slate-500 font-medium mt-0.5">{m.description}</div>}
                       </td>
-                      <td className="font-medium">₹{m.cost}</td>
-                      <td className="text-gray-400 text-sm">{m.etaText ?? '—'}</td>
-                      <td>{m.regionLimited ? <span className="badge-orange">Yes</span> : <span className="text-gray-600">No</span>}</td>
+                      <td className="font-bold text-slate-900 text-xs">₹{m.cost}</td>
+                      <td className="text-slate-500 text-xs font-medium">{m.etaText ?? '—'}</td>
+                      <td>{m.regionLimited ? <span className="badge-orange">Yes</span> : <span className="text-slate-400 text-xs">No</span>}</td>
                       <td>
                         <button onClick={() => toggleShipping(m.id, m.active)}
-                          className={`text-xs px-3 py-1 rounded-full border transition-colors ${
-                            m.active ? 'bg-green-500/10 text-green-400 border-green-500/30' : 'bg-gray-800 text-gray-500 border-gray-700'
+                          className={`text-[10px] font-bold px-3 py-1 rounded-full border transition-colors cursor-pointer ${
+                            m.active ? 'badge-green hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200' : 'badge-gray hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
                           }`}>
                           {m.active ? 'Active' : 'Inactive'}
                         </button>
+                      </td>
+                      <td>
+                        <div className="flex gap-2">
+                          <button onClick={() => startEditShipping(m)}
+                            className="text-xs text-orange-600 hover:underline font-bold cursor-pointer">Edit</button>
+                          <button onClick={() => deleteShipping(m.id)}
+                            className="text-xs text-rose-500 hover:underline font-bold cursor-pointer">Delete</button>
+                        </div>
                       </td>
                     </tr>
                   ))}

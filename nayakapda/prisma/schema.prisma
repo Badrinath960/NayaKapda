@@ -165,6 +165,7 @@ model ProductPhoto {
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   url       String
+  publicId  String?  // Cloudinary public_id for deletion
   altText   String?
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())

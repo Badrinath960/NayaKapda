@@ -42,6 +42,8 @@ export default function AdminOrdersPage() {
   const exportCSV = () => {
     const params = new URLSearchParams({ format: 'csv', limit: '10000' });
     if (filters.status) params.set('status', filters.status);
+    if (filters.paymentMode) params.set('paymentMode', filters.paymentMode);
+    if (filters.search) params.set('search', filters.search);
     window.open(`/api/admin/orders?${params}`);
   };
 

@@ -34,6 +34,8 @@ const updateProductSchema = z.object({
       })
     )
     .optional(),
+  // IDs of variants to permanently delete
+  deletedVariantIds: z.array(z.string()).optional(),
 });
 
 // GET /api/admin/products/[id] — get product detail including variants and tiers
@@ -116,7 +118,17 @@ export const PATCH = withAdminAuth(async (request: NextRequest, context: { param
       });
     }
 
-    // 3. Update Variants if provided
+    // 3. Delete variants marked for removal
+    if (parsed.data.deletedVariantIds && parsed.data.deletedVariantIds.length > 0) {
+      await tx.productVariant.deleteMany({
+        where: {
+          id: { in: parsed.data.deletedVariantIds },
+          productId: id, // safety: only delete variants belonging to this product
+        },
+      });
+    }
+
+    // 4. Update Variants if provided
     if (variants !== undefined) {
       // Simple sync: update existing or create new ones
       for (const variant of variants) {

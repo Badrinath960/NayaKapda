@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { formatINR } from '@/lib/utils';
 
 type Variant = {
@@ -12,6 +13,7 @@ type Variant = {
   sku: string;
   stockQty: number;
   active: boolean;
+  _delete?: boolean; // mark for deletion
 };
 
 type PricingTier = {
@@ -19,6 +21,14 @@ type PricingTier = {
   minQty: number;
   maxQty: number | null;
   pricePerPiece: number;
+};
+
+type ProductPhoto = {
+  id: string;
+  url: string;
+  altText: string | null;
+  sortOrder: number;
+  publicId: string | null;
 };
 
 type Category = {
@@ -49,11 +59,18 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
   const [variants, setVariants] = useState<Variant[]>([]);
   const [tiers, setTiers] = useState<PricingTier[]>([]);
 
+  // Photos
+  const [photos, setPhotos] = useState<ProductPhoto[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Temp inputs for adding
   const [newVar, setNewVar] = useState({ size: 'M', color: 'Black', sku: '', stockQty: '100', active: true });
   const [newTier, setNewTier] = useState({ minQty: '', maxQty: '', pricePerPiece: '' });
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const [catRes, prodRes] = await Promise.all([
         fetch('/api/admin/categories'),
@@ -76,15 +93,24 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
         });
         setVariants(p.variants || []);
         setTiers(p.pricingTiers || []);
+        setPhotos(p.photos || []);
       }
     } catch (err) {
       setError('Failed to load product details');
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.id]);
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { loadData(); }, [loadData]);
+
+  // Clear success message after 3s
+  useEffect(() => {
+    if (success) {
+      const t = setTimeout(() => setSuccess(null), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [success]);
 
   const handleAddVariant = () => {
     if (!newVar.sku.trim()) return;
@@ -98,12 +124,23 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
     setNewVar({ ...newVar, sku: '' });
   };
 
+  const handleRemoveVariant = (index: number) => {
+    const copy = [...variants];
+    if (copy[index].id) {
+      // Existing variant: mark for deletion
+      copy[index] = { ...copy[index], _delete: true };
+    } else {
+      // New unsaved variant: just remove from array
+      copy.splice(index, 1);
+    }
+    setVariants(copy);
+  };
+
   const handleAddTier = () => {
     if (!newTier.minQty || !newTier.pricePerPiece) return;
     const min = parseInt(newTier.minQty);
     const max = newTier.maxQty ? parseInt(newTier.maxQty) : null;
     const price = parseFloat(newTier.pricePerPiece);
-
     setTiers([...tiers, { minQty: min, maxQty: max, pricePerPiece: price }].sort((a, b) => a.minQty - b.minQty));
     setNewTier({ minQty: '', maxQty: '', pricePerPiece: '' });
   };
@@ -114,11 +151,16 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
     setError(null);
     setSuccess(null);
 
+    // Build variant payload — exclude _delete items as "deletions" if they have an id
+    const activeVariants = variants.filter(v => !v._delete);
+    const deletedVariantIds = variants.filter(v => v._delete && v.id).map(v => v.id!);
+
     const payload = {
       ...form,
       gsm: form.gsm ? parseInt(form.gsm) : null,
       basePrice: parseFloat(form.basePrice),
-      variants,
+      variants: activeVariants.map(({ _delete, ...v }) => v),
+      deletedVariantIds,
       pricingTiers: tiers,
     };
 
@@ -132,7 +174,7 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
       if (!res.ok) {
         setError(data.message || 'Failed to update product');
       } else {
-        setSuccess('Product details saved successfully');
+        setSuccess('Product saved successfully ✓');
         loadData();
       }
     } catch (err) {
@@ -156,185 +198,430 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
     }
   };
 
-  if (loading) return <div className="p-8 text-gray-500">Loading Product Details...</div>;
+  // ─── Photo Upload ─────────────────────────────────────────────────────────
+
+  const uploadPhoto = async (file: File) => {
+    setUploadingPhoto(true);
+    setUploadError(null);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('altText', form.name || 'Product image');
+
+    try {
+      const res = await fetch(`/api/admin/products/${params.id}/photos`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setUploadError(data.message || 'Upload failed');
+      } else {
+        setPhotos(prev => [...prev, data.data]);
+      }
+    } catch {
+      setUploadError('Upload failed. Please try again.');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) uploadPhoto(file);
+    // Reset input so same file can be re-selected
+    e.target.value = '';
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadPhoto(file);
+  };
+
+  const handleDeletePhoto = async (photoId: string) => {
+    if (!confirm('Delete this photo?')) return;
+    try {
+      const res = await fetch(`/api/admin/products/${params.id}/photos/${photoId}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setPhotos(prev => prev.filter(p => p.id !== photoId));
+      } else {
+        setUploadError('Failed to delete photo');
+      }
+    } catch {
+      setUploadError('Failed to delete photo');
+    }
+  };
+
+  const handleUpdateAltText = async (photoId: string, altText: string) => {
+    await fetch(`/api/admin/products/${params.id}/photos/${photoId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ altText }),
+    });
+    setPhotos(prev => prev.map(p => p.id === photoId ? { ...p, altText } : p));
+  };
+
+  if (loading) return (
+    <div className="p-8 flex items-center gap-3 text-slate-500">
+      <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+      <span className="text-xs font-semibold">Loading Product...</span>
+    </div>
+  );
+
+  const visibleVariants = variants.filter(v => !v._delete);
 
   return (
     <div className="p-8 space-y-6 max-w-5xl mx-auto">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <Link href="/admin/products" className="text-gray-500 text-sm hover:text-white mb-2 flex items-center gap-1">
+          <Link href="/admin/products" className="text-slate-500 text-xs font-semibold hover:text-slate-900 mb-2 flex items-center gap-1">
             ← Back to Products
           </Link>
-          <h1 className="text-2xl font-bold">Edit Product: {form.name}</h1>
+          <h1 className="text-2xl font-black text-slate-900">Edit: {form.name}</h1>
         </div>
-        <button onClick={handleDelete} className="btn-secondary hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30 text-xs py-2 px-4 border border-gray-800 rounded-xl">
+        <button onClick={handleDelete} className="py-2 px-4 text-xs font-bold rounded-xl bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 transition-colors cursor-pointer">
           🗑 Delete Product
         </button>
       </div>
 
-      {success && <div className="p-3 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl text-sm">{success}</div>}
-      {error && <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm">{error}</div>}
+      {success && (
+        <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-semibold flex items-center gap-2">
+          <span>✓</span> {success}
+        </div>
+      )}
+      {error && (
+        <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-semibold">
+          {error}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Basic details */}
+        {/* Left Column: Basic details + Variants */}
         <div className="lg:col-span-2 space-y-6">
-          <form onSubmit={handleSave} className="card p-6 space-y-4">
-            <h3 className="font-bold border-b border-gray-900 pb-2">Basic Info</h3>
+
+          {/* ─── Basic Info ─────────────────────────────────────── */}
+          <form onSubmit={handleSave} className="card p-6 space-y-4 bg-white border-slate-200 shadow-sm">
+            <h3 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">Basic Info</h3>
+
             <div>
               <label className="label">Name *</label>
-              <input type="text" className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+              <input type="text" className="input text-sm" value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })} required />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="label">Category *</label>
-                <select className="input" value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })} required>
+                <select className="input text-sm" value={form.categoryId}
+                  onChange={(e) => setForm({ ...form, categoryId: e.target.value })} required>
                   {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
                 <label className="label">Base Price (₹) *</label>
-                <input type="number" className="input" value={form.basePrice} onChange={(e) => setForm({ ...form, basePrice: e.target.value })} required min={0} step="0.01" />
+                <input type="number" className="input text-sm" value={form.basePrice}
+                  onChange={(e) => setForm({ ...form, basePrice: e.target.value })} required min={0} step="0.01" />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="label">GSM</label>
-                <input type="number" className="input" value={form.gsm} onChange={(e) => setForm({ ...form, gsm: e.target.value })} min={0} />
+                <input type="number" className="input text-sm" value={form.gsm}
+                  onChange={(e) => setForm({ ...form, gsm: e.target.value })} min={0} />
               </div>
               <div>
                 <label className="label">Fabric Composition</label>
-                <input type="text" className="input" value={form.fabricComposition} onChange={(e) => setForm({ ...form, fabricComposition: e.target.value })} />
+                <input type="text" className="input text-sm" value={form.fabricComposition}
+                  onChange={(e) => setForm({ ...form, fabricComposition: e.target.value })} />
               </div>
             </div>
 
             <div>
               <label className="label">Description</label>
-              <textarea className="input min-h-[100px] resize-none" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+              <textarea className="input text-sm min-h-[100px] resize-none" value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })} />
             </div>
 
-            <div className="flex items-center gap-3">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.active} onChange={(e) => setForm({ ...form, active: e.target.checked })} />
-                <span className="text-sm font-semibold">Active in Catalog</span>
-              </label>
-            </div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={form.active}
+                onChange={(e) => setForm({ ...form, active: e.target.checked })}
+                className="w-4 h-4 rounded accent-orange-500" />
+              <span className="text-xs font-semibold text-slate-700">Active in Catalog</span>
+            </label>
 
-            <button type="submit" disabled={saving} className="btn-primary w-full py-2.5">
+            <button type="submit" disabled={saving}
+              className="btn-primary w-full py-2.5 text-xs font-bold">
               {saving ? 'Saving...' : 'Save Product Details'}
             </button>
           </form>
 
-          {/* Variants section */}
-          <div className="card p-6 space-y-4">
-            <h3 className="font-bold border-b border-gray-900 pb-2">Variants (SKUs)</h3>
+          {/* ─── Variants ───────────────────────────────────────── */}
+          <div className="card p-6 space-y-4 bg-white border-slate-200 shadow-sm">
+            <h3 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">
+              Variants (SKUs) <span className="text-slate-400 font-normal">({visibleVariants.length})</span>
+            </h3>
 
-            {/* Existing Variants Table */}
-            <div className="table-container border-gray-800">
+            <div className="table-container border-slate-200">
               <table className="table">
                 <thead>
-                  <tr><th>SKU</th><th>Size</th><th>Color</th><th>Stock</th><th>Status</th></tr>
+                  <tr>
+                    <th>SKU</th><th>Size</th><th>Color</th><th>Stock</th><th>Status</th><th></th>
+                  </tr>
                 </thead>
                 <tbody>
-                  {variants.map((v, i) => (
-                    <tr key={v.id || v.sku}>
-                      <td className="font-mono text-xs">{v.sku}</td>
-                      <td>{v.size}</td>
-                      <td>{v.color}</td>
-                      <td>
-                        <input
-                          type="number"
-                          value={v.stockQty}
-                          onChange={(e) => {
-                            const newQty = parseInt(e.target.value) || 0;
-                            const copy = [...variants];
-                            copy[i].stockQty = newQty;
-                            setVariants(copy);
-                          }}
-                          className="w-20 bg-gray-950 border border-gray-800 text-sm px-2 py-1 rounded text-white font-semibold text-center"
-                        />
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const copy = [...variants];
-                            copy[i].active = !v.active;
-                            setVariants(copy);
-                          }}
-                          className={`text-xs px-2 py-0.5 border rounded-full ${v.active ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-gray-800 text-gray-500 border-gray-700'}`}
-                        >
-                          {v.active ? 'Active' : 'Inactive'}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {visibleVariants.length === 0 ? (
+                    <tr><td colSpan={6} className="text-center py-6 text-slate-400 text-xs">No variants yet. Add one below.</td></tr>
+                  ) : variants.map((v, i) => {
+                    if (v._delete) return null;
+                    return (
+                      <tr key={v.id || v.sku}>
+                        <td className="font-mono text-xs text-slate-700">{v.sku}</td>
+                        <td className="text-xs font-medium text-slate-600">{v.size}</td>
+                        <td className="text-xs font-medium text-slate-600">{v.color}</td>
+                        <td>
+                          <input type="number" value={v.stockQty}
+                            onChange={(e) => {
+                              const copy = [...variants];
+                              copy[i].stockQty = parseInt(e.target.value) || 0;
+                              setVariants(copy);
+                            }}
+                            className="w-20 border border-slate-200 rounded-lg text-xs px-2 py-1 text-center font-semibold text-slate-800 focus:outline-none focus:border-orange-400"
+                          />
+                        </td>
+                        <td>
+                          <button type="button"
+                            onClick={() => {
+                              const copy = [...variants];
+                              copy[i].active = !v.active;
+                              setVariants(copy);
+                            }}
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full border cursor-pointer ${v.active
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : 'bg-slate-100 text-slate-500 border-slate-200'
+                              }`}>
+                            {v.active ? 'Active' : 'Inactive'}
+                          </button>
+                        </td>
+                        <td>
+                          <button type="button" onClick={() => handleRemoveVariant(i)}
+                            className="text-rose-400 hover:text-rose-600 text-xs font-bold px-2 py-1 rounded hover:bg-rose-50 transition-colors cursor-pointer">
+                            ✕
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
 
-            {/* Quick Add Variant Form */}
-            <div className="glass p-4 rounded-xl grid grid-cols-5 gap-2 items-end">
+            {/* Quick Add Variant */}
+            <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl grid grid-cols-5 gap-2 items-end">
               <div>
-                <label className="text-[10px] text-gray-400 font-bold uppercase">Size</label>
-                <select className="input text-xs py-1" value={newVar.size} onChange={(e) => setNewVar({ ...newVar, size: e.target.value })}>
-                  {['S', 'M', 'L', 'XL', 'XXL', '3XL', 'Free Size'].map((sz) => <option key={sz} value={sz}>{sz}</option>)}
+                <label className="text-[10px] text-slate-500 font-bold uppercase block mb-1">Size</label>
+                <select className="input text-xs py-1.5" value={newVar.size}
+                  onChange={(e) => setNewVar({ ...newVar, size: e.target.value })}>
+                  {['S', 'M', 'L', 'XL', 'XXL', '3XL', 'Free Size'].map((sz) =>
+                    <option key={sz} value={sz}>{sz}</option>
+                  )}
                 </select>
               </div>
               <div>
-                <label className="text-[10px] text-gray-400 font-bold uppercase">Color</label>
-                <input type="text" className="input text-xs py-1" value={newVar.color} onChange={(e) => setNewVar({ ...newVar, color: e.target.value })} />
+                <label className="text-[10px] text-slate-500 font-bold uppercase block mb-1">Color</label>
+                <input type="text" className="input text-xs py-1.5" value={newVar.color}
+                  onChange={(e) => setNewVar({ ...newVar, color: e.target.value })} />
               </div>
               <div className="col-span-2">
-                <label className="text-[10px] text-gray-400 font-bold uppercase">SKU *</label>
-                <input type="text" placeholder="e.g. HOD-BLK-M" className="input text-xs py-1" value={newVar.sku} onChange={(e) => setNewVar({ ...newVar, sku: e.target.value })} />
+                <label className="text-[10px] text-slate-500 font-bold uppercase block mb-1">SKU *</label>
+                <input type="text" placeholder="HOD-BLK-M" className="input text-xs py-1.5" value={newVar.sku}
+                  onChange={(e) => setNewVar({ ...newVar, sku: e.target.value })} />
               </div>
-              <button type="button" onClick={handleAddVariant} className="btn-secondary py-1 text-xs">Add SKU</button>
+              <button type="button" onClick={handleAddVariant}
+                className="btn-secondary py-1.5 text-xs font-bold">+ Add</button>
             </div>
+            <p className="text-[10px] text-slate-400 font-medium">
+              Changes to variants are saved when you click "Save Product Details" above.
+            </p>
+          </div>
+
+          {/* ─── Product Images ──────────────────────────────────── */}
+          <div className="card p-6 space-y-4 bg-white border-slate-200 shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <h3 className="font-bold text-slate-900 text-sm">
+                Product Images
+                <span className="text-slate-400 font-normal ml-1">({photos.length}/8)</span>
+              </h3>
+              {photos.length < 8 && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingPhoto}
+                  className="btn-primary py-1.5 px-4 text-xs font-bold"
+                >
+                  {uploadingPhoto ? '⏳ Uploading...' : '+ Upload Photo'}
+                </button>
+              )}
+            </div>
+
+            {uploadError && (
+              <div className="p-2.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-xs font-semibold">
+                {uploadError}
+              </div>
+            )}
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/jpg,image/png,image/webp"
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+
+            {/* Drag-and-Drop Zone */}
+            {photos.length < 8 && (
+              <div
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={handleDrop}
+                onClick={() => !uploadingPhoto && fileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${dragOver
+                  ? 'border-orange-400 bg-orange-50'
+                  : 'border-slate-300 bg-slate-50 hover:border-orange-300 hover:bg-orange-50/50'
+                  }`}
+              >
+                {uploadingPhoto ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-xs font-semibold text-slate-500">Uploading to Cloudinary...</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="text-3xl mb-2">📷</div>
+                    <p className="text-xs font-bold text-slate-600">Drag & drop image here</p>
+                    <p className="text-[10px] text-slate-400 mt-1">or click to browse • JPEG, PNG, WebP • Max 5 MB</p>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Photo Grid */}
+            {photos.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {photos.map((photo) => (
+                  <div key={photo.id} className="group relative rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
+                    <div className="aspect-square relative">
+                      <Image
+                        src={photo.url}
+                        alt={photo.altText || 'Product image'}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                      />
+                      {/* Delete overlay */}
+                      <button
+                        onClick={() => handleDeletePhoto(photo.id)}
+                        className="absolute top-1.5 right-1.5 bg-rose-600 text-white text-[10px] font-bold w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow-md"
+                        title="Delete photo"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    {/* Alt text input */}
+                    <div className="p-1.5">
+                      <input
+                        type="text"
+                        value={photo.altText || ''}
+                        placeholder="Alt text..."
+                        className="w-full text-[10px] border border-slate-200 rounded px-1.5 py-1 focus:outline-none focus:border-orange-400 bg-white"
+                        onBlur={(e) => {
+                          if (e.target.value !== photo.altText) {
+                            handleUpdateAltText(photo.id, e.target.value);
+                          }
+                        }}
+                        onChange={(e) => {
+                          setPhotos(prev => prev.map(p =>
+                            p.id === photo.id ? { ...p, altText: e.target.value } : p
+                          ));
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {photos.length === 0 && !uploadingPhoto && (
+              <p className="text-center text-xs text-slate-400 font-medium py-2">
+                No images uploaded yet. Add up to 8 product photos.
+              </p>
+            )}
+
+            {photos.length >= 8 && (
+              <p className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 font-semibold">
+                ⚠️ Maximum 8 photos reached. Delete a photo to upload a new one.
+              </p>
+            )}
           </div>
         </div>
 
         {/* Right Column: Pricing Tiers */}
-        <div className="card p-6 space-y-4">
-          <h3 className="font-bold border-b border-gray-900 pb-2">Wholesale Pricing Tiers</h3>
+        <div className="card p-6 space-y-4 bg-white border-slate-200 shadow-sm h-fit sticky top-6">
+          <h3 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">Wholesale Pricing Tiers</h3>
 
           <div className="space-y-2">
             {tiers.length === 0 ? (
-              <p className="text-gray-500 text-sm">No discount tiers. Using base catalog price.</p>
+              <p className="text-slate-400 text-xs font-medium">No tiers set. Using base price for all quantities.</p>
             ) : (
               tiers.map((t, i) => (
-                <div key={i} className="flex justify-between items-center text-sm p-3 border border-gray-900 rounded-xl bg-gray-900/40">
+                <div key={i} className="flex justify-between items-center text-xs p-3 border border-slate-200 rounded-xl bg-slate-50">
                   <div>
-                    <span className="font-semibold text-orange-400">{t.minQty}{t.maxQty ? ` – ${t.maxQty}` : '+'} pieces</span>
+                    <span className="font-bold text-orange-600">
+                      {t.minQty}{t.maxQty ? ` – ${t.maxQty}` : '+'} pcs
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold">{formatINR(t.pricePerPiece)}</span>
-                    <button type="button" onClick={() => setTiers(tiers.filter((_, idx) => idx !== i))} className="text-red-400 text-xs">✕</button>
+                    <span className="font-black text-slate-900">{formatINR(t.pricePerPiece)}</span>
+                    <button type="button" onClick={() => setTiers(tiers.filter((_, idx) => idx !== i))}
+                      className="text-rose-400 hover:text-rose-600 text-xs font-bold cursor-pointer">✕</button>
                   </div>
                 </div>
               ))
             )}
           </div>
 
-          <div className="glass p-4 rounded-xl space-y-3">
-            <h4 className="text-xs font-bold uppercase text-orange-400">Add Pricing Tier</h4>
+          <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3">
+            <h4 className="text-[10px] font-bold uppercase text-orange-600">Add Tier</h4>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="text-[10px] text-gray-500 uppercase">Min Qty *</label>
-                <input type="number" placeholder="50" className="input text-xs py-1" value={newTier.minQty} onChange={(e) => setNewTier({ ...newTier, minQty: e.target.value })} />
+                <label className="text-[10px] text-slate-500 uppercase font-semibold block mb-1">Min Qty *</label>
+                <input type="number" placeholder="50" className="input text-xs py-1.5" value={newTier.minQty}
+                  onChange={(e) => setNewTier({ ...newTier, minQty: e.target.value })} />
               </div>
               <div>
-                <label className="text-[10px] text-gray-500 uppercase">Max Qty (Or empty)</label>
-                <input type="number" placeholder="100" className="input text-xs py-1" value={newTier.maxQty} onChange={(e) => setNewTier({ ...newTier, maxQty: e.target.value })} />
+                <label className="text-[10px] text-slate-500 uppercase font-semibold block mb-1">Max (blank=∞)</label>
+                <input type="number" placeholder="100" className="input text-xs py-1.5" value={newTier.maxQty}
+                  onChange={(e) => setNewTier({ ...newTier, maxQty: e.target.value })} />
               </div>
             </div>
             <div>
-              <label className="text-[10px] text-gray-500 uppercase">Price Per Piece (₹) *</label>
-              <input type="number" placeholder="280" className="input text-xs py-1" value={newTier.pricePerPiece} onChange={(e) => setNewTier({ ...newTier, pricePerPiece: e.target.value })} step="0.01" />
+              <label className="text-[10px] text-slate-500 uppercase font-semibold block mb-1">Price/Piece (₹) *</label>
+              <input type="number" placeholder="280" className="input text-xs py-1.5" value={newTier.pricePerPiece}
+                onChange={(e) => setNewTier({ ...newTier, pricePerPiece: e.target.value })} step="0.01" />
             </div>
-            <button type="button" onClick={handleAddTier} className="btn-secondary w-full py-1 text-xs">Add Tier</button>
+            <button type="button" onClick={handleAddTier} className="btn-secondary w-full py-1.5 text-xs font-bold">
+              + Add Tier
+            </button>
           </div>
+          <p className="text-[10px] text-slate-400 font-medium">
+            Tiers are saved when you click "Save Product Details".
+          </p>
         </div>
       </div>
     </div>

@@ -33,11 +33,7 @@ export default function AdminCategoriesPage() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      const res = await fetch('/api/admin/categories', {
-        headers: { Cookie: `admin_token=${token}` },
-        credentials: 'include',
-      });
+      const res = await fetch('/api/admin/categories', { credentials: 'include' });
       const data = await res.json();
       if (data.success) setCategories(data.data);
     } catch {
