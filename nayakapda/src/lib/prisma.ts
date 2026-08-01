@@ -2,10 +2,25 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
-const connectionString = process.env.DATABASE_URL ?? 'postgresql://postgres:badri@123@localhost:5432/nayakapda_tshirt';
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
 
 function createPrismaClient() {
-  const pool = new Pool({ connectionString });
+  const dbUrl = process.env.DATABASE_URL!;
+  // Enable SSL only for cloud-hosted databases (Neon, Supabase, RDS, etc.)
+  // Local PostgreSQL does not support SSL and will fail if ssl is forced on
+  const isCloudDb = dbUrl.includes('neon.tech') ||
+                    dbUrl.includes('amazonaws.com') ||
+                    dbUrl.includes('supabase.co') ||
+                    dbUrl.includes('sslmode=require');
+
+  const pool = new Pool({
+    connectionString: dbUrl,
+    // max:1 prevents connection exhaustion on Vercel serverless
+    max: 1,
+    ssl: isCloudDb ? { rejectUnauthorized: false } : undefined,
+  });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({
     adapter,

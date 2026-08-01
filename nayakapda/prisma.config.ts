@@ -2,9 +2,15 @@ import { defineConfig } from 'prisma/config';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
+// Load .env.local for local development.
+// In Vercel/CI, env vars are injected directly by the platform.
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
-const DB_URL = process.env.DATABASE_URL ?? 'postgresql://postgres:badri@123@localhost:5432/nayakapda_tshirt';
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    'DATABASE_URL is not set. Add it to .env.local for local dev, or to your Vercel environment variables for production.'
+  );
+}
 
 export default defineConfig({
   schema: './prisma/schema.prisma',
@@ -12,6 +18,9 @@ export default defineConfig({
     seed: 'node prisma/run-seed.js',
   },
   datasource: {
-    url: DB_URL,
+    // Prisma 7 only supports `url` and `shadowDatabaseUrl` in defineConfig.
+    // Use the Neon pooled URL here for runtime queries.
+    // For migrations (prisma migrate deploy), Prisma CLI uses this same URL.
+    url: process.env.DATABASE_URL,
   },
 });
