@@ -3,10 +3,13 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import bcrypt from 'bcryptjs';
 
-// Set DATABASE_URL before creating anything
-process.env.DATABASE_URL = 'postgresql://postgres:badri@123@localhost:5432/nayakapda_tshirt';
+const dbUrl = process.env.DATABASE_URL ?? 'postgresql://postgres:badri@123@localhost:5432/nayakapda_tshirt';
+const isCloudDb = dbUrl.includes('neon.tech') || dbUrl.includes('sslmode=require') || dbUrl.includes('amazonaws.com');
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: dbUrl,
+  ssl: isCloudDb ? { rejectUnauthorized: false } : undefined,
+});
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter } as any);
 
