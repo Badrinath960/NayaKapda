@@ -40,7 +40,10 @@ function LoginForm() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="text-3xl font-black gradient-text">NayaKapda</Link>
+          <Link href="/" className="inline-flex items-center gap-2.5">
+            <img src="/logo.png" alt="NayaKapda.com" className="h-10 w-auto object-contain" />
+            <span className="text-3xl font-black text-slate-900">NayaKapda<span className="text-orange-600">.com</span></span>
+          </Link>
           <p className="text-slate-500 mt-1 text-xs font-semibold">Bulk Apparel Platform</p>
         </div>
 

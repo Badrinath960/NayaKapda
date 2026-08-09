@@ -1,13 +1,19 @@
-# NayaKapda — Project Rules & Conventions
+# NayaKapda.com — Project Rules & Conventions
 
 > **Mandatory guidelines for all developers and AI agents working on this project.**
-> Last updated: 2026-07-12
+> Last updated: 2026-08-10
 
 ---
 
 ## 📋 Project Overview
 
-**NayaKapda** is a B2B Wholesale Apparel Ecommerce Platform — a production-grade Next.js 14+ (App Router) application enabling bulk T-shirt and apparel sales to printing businesses and resellers. It includes a customer storefront and a role-gated admin panel.
+**NayaKapda.com** (Proprietor: Mr. Karan Rajput | Vadodara, Gujarat) is a B2B Wholesale Apparel Ecommerce Platform — a production-grade Next.js application enabling bulk T-shirt and apparel sales to printing businesses and resellers. It includes a customer storefront and a role-gated admin panel.
+
+### Official Brand Assets & Contact
+- **Website Name / Brand**: `NayaKapda.com`
+- **Official Brand Logo**: `/logo.png` (Aligned in Navbar, Footer, Auth, and Admin views)
+- **Primary Contact Numbers**: `+91 8735045268`, `+91 9825682631`, `+91 7698752012`
+- **Address**: Shop No-09, Wing-E, PM Avas Yojna, Near Ratri Bazar, New Sama Road, Vadodara, Gujarat - 390008, India
 
 ---
 

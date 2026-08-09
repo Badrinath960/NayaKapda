@@ -14,9 +14,18 @@ export function Navbar() {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
       <nav className="page-container flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-2xl font-black gradient-text">NayaKapda</span>
-          <span className="hidden sm:block text-xs text-slate-500 font-semibold mt-1">Bulk Apparel</span>
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <img
+            src="/logo.png"
+            alt="NayaKapda.com"
+            className="h-9 w-auto object-contain transition-transform group-hover:scale-105"
+          />
+          <div className="flex flex-col">
+            <span className="text-xl font-black text-slate-900 leading-none">
+              NayaKapda<span className="text-orange-600">.com</span>
+            </span>
+            <span className="text-[10px] text-slate-500 font-semibold tracking-tight mt-0.5">Bulk Apparel Store</span>
+          </div>
         </Link>
 
         {/* Desktop Nav */}

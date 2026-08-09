@@ -37,7 +37,10 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 text-slate-900">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="text-3xl font-black gradient-text">NayaKapda</Link>
+          <Link href="/" className="inline-flex items-center gap-2">
+            <img src="/logo.png" alt="NayaKapda.com" className="h-9 w-auto object-contain" />
+            <span className="text-2xl font-black text-slate-900">NayaKapda<span className="text-orange-600">.com</span></span>
+          </Link>
           <p className="text-slate-500 mt-1 text-xs font-semibold">Admin Panel</p>
         </div>
 

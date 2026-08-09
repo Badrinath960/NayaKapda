@@ -7,16 +7,17 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           {/* Brand Col */}
           <div className="space-y-3">
-            <Link href="/" className="inline-block">
-              <span className="text-2xl font-black gradient-text">NayaKapda</span>
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/logo.png" alt="NayaKapda.com" className="h-8 w-auto object-contain" />
+              <span className="text-xl font-black text-slate-900">NayaKapda<span className="text-orange-600">.com</span></span>
             </Link>
             <p className="text-xs text-slate-500 leading-relaxed font-medium">
               India&apos;s trusted B2B bulk apparel platform for printing businesses & resellers.
             </p>
-            <div className="pt-2 text-xs text-slate-500 font-medium space-y-1">
-              <p>📍 Mumbai, Maharashtra, India</p>
+            <div className="pt-2 text-xs text-slate-500 font-medium space-y-1.5">
+              <p>📍 Shop No-09, Wing-E, PM Avas Yojna, Near Ratri Bazar, New Sama Road, Vadodara, Gujarat - 390008</p>
               <p>✉️ <a href="mailto:support@nayakapda.com" className="hover:text-orange-600">support@nayakapda.com</a></p>
-              <p>📞 <a href="tel:+919999999901" className="hover:text-orange-600">+91 9999 999 901</a></p>
+              <p>📞 <a href="tel:+918735045268" className="hover:text-orange-600">+91 87350 45268</a> / <a href="tel:+919825682631" className="hover:text-orange-600">+91 98256 82631</a></p>
             </div>
           </div>
 
@@ -56,7 +57,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-slate-500 font-medium">© {new Date().getFullYear()} NayaKapda Bulk Apparel. All rights reserved.</p>
+          <p className="text-xs text-slate-500 font-medium">© {new Date().getFullYear()} NayaKapda.com Bulk Apparel. All rights reserved.</p>
           <div className="flex items-center gap-4 text-xs text-slate-500 font-medium">
             <span>Made in India 🇮🇳</span>
             <span>•</span>

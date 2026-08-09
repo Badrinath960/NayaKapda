@@ -2,8 +2,8 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 
 export const metadata = {
-  title: 'About NayaKapda — Bulk Apparel for Printers & Resellers',
-  description: 'Learn about NayaKapda — India\'s trusted bulk T-shirt and apparel platform for screen printers, DTF printers, and resellers.',
+  title: 'About NayaKapda.com — Bulk Apparel for Printers & Resellers',
+  description: 'Learn about NayaKapda.com — India\'s trusted bulk T-shirt and apparel platform for screen printers, DTF printers, and resellers.',
 };
 
 const stats = [
@@ -48,7 +48,7 @@ export default function AboutPage() {
               Est. 2019 · Made in India 🇮🇳
             </span>
             <h1 className="text-4xl sm:text-5xl font-black text-slate-900 mb-3 leading-tight">
-              About <span className="gradient-text">NayaKapda</span>
+              About <span className="gradient-text">NayaKapda.com</span>
             </h1>
             <p className="text-slate-600 text-base max-w-xl mx-auto leading-relaxed font-medium">
               India&apos;s dedicated bulk apparel platform built for screen printers, DTF printers, embroiderers, and resellers who need consistent quality at trade prices.
@@ -80,10 +80,10 @@ export default function AboutPage() {
                 </h2>
                 <div className="space-y-4 text-slate-600 text-xs leading-relaxed font-medium">
                   <p>
-                    NayaKapda was born out of frustration. Our founders ran a screen printing shop and kept running into the same problem: sourcing quality blank T-shirts in bulk, at consistent quality, at fair prices — was a nightmare.
+                    NayaKapda.com was born out of frustration. Our founders ran a custom printing store in Vadodara, Gujarat and kept running into the same problem: sourcing quality blank T-shirts in bulk, at consistent quality, at fair prices — was a nightmare.
                   </p>
                   <p>
-                    In 2019, we decided to solve this ourselves. We built direct relationships with fabric mills in Tiruppur and Surat, and created NayaKapda — a platform designed exclusively for trade buyers who need reliability above everything else.
+                    In 2019, we decided to solve this ourselves. We built direct relationships with fabric mills in Tiruppur and Surat, and created NayaKapda.com — a platform designed exclusively for trade buyers who need reliability above everything else.
                   </p>
                   <p>
                     Today, we supply blank apparel to over 100 printers and resellers across India, dispatching thousands of pieces every month with same-day processing and pan-India delivery.
