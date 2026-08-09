@@ -12,7 +12,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-      <nav className="page-container flex items-center justify-between h-16 sm:h-18">
+      <nav className="page-container flex items-center justify-between h-20 sm:h-22">
         
         {/* Left Section: Mobile Hamburger + Logo */}
         <div className="flex items-center gap-3">
@@ -36,7 +36,7 @@ export function Navbar() {
             <img
               src="/logo.png"
               alt="NayaKapda.com — B2B Wholesale Apparel"
-              className="h-9 sm:h-11 w-auto object-contain transition-transform group-hover:scale-105"
+              className="h-12 sm:h-16 w-auto object-contain transition-transform group-hover:scale-105"
             />
           </Link>
         </div>

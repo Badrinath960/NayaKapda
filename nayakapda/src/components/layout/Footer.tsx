@@ -11,7 +11,7 @@ export function Footer() {
               <img
                 src="/logo.png"
                 alt="NayaKapda.com — B2B Wholesale Apparel"
-                className="h-10 sm:h-11 w-auto object-contain"
+                className="h-14 sm:h-16 w-auto object-contain"
               />
             </Link>
 

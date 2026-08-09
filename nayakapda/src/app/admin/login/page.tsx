@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
         {/* Logo — Image logo only */}
         <div className="text-center mb-6">
           <Link href="/" className="inline-block">
-            <img src="/logo.png" alt="NayaKapda.com" className="h-12 w-auto mx-auto object-contain" />
+            <img src="/logo.png" alt="NayaKapda.com" className="h-16 sm:h-20 w-auto mx-auto object-contain" />
           </Link>
           <p className="text-slate-500 mt-2 text-xs font-semibold">Admin Panel</p>
         </div>

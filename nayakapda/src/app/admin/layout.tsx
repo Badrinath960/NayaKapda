@@ -32,7 +32,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="w-60 flex-shrink-0 border-r border-slate-200 bg-white flex flex-col shadow-xs">
         <div className="p-5 border-b border-slate-200">
           <Link href="/" className="block">
-            <img src="/logo.png" alt="NayaKapda.com" className="h-9 w-auto object-contain mb-1" />
+            <img src="/logo.png" alt="NayaKapda.com" className="h-12 w-auto object-contain mb-1" />
             <p className="text-[10px] text-slate-500 font-semibold">Admin Panel</p>
           </Link>
         </div>
