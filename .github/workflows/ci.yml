@@ -28,20 +28,20 @@ jobs:
       - name: Generate Prisma client
         run: cd nayakapda && npx prisma generate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/nayakapda_tshirt' }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL || 'postgresql://postgres:postgres@localhost:5432/nayakapda_tshirt' }}
 
       - name: TypeScript type check
         run: cd nayakapda && npx tsc --noEmit
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-          ADMIN_JWT_SECRET: ${{ secrets.ADMIN_JWT_SECRET }}
-          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
-          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
-          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/nayakapda_tshirt' }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL || 'postgresql://postgres:postgres@localhost:5432/nayakapda_tshirt' }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'ci-dummy-nextauth-secret-key-2026' }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+          ADMIN_JWT_SECRET: ${{ secrets.ADMIN_JWT_SECRET || 'ci-dummy-admin-jwt-secret-key-2026' }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME || 'dummy' }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY || '123456789' }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET || 'dummy' }}
+          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL || 'cloudinary://123456789:dummy@dummy' }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY || 're_dummy' }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
