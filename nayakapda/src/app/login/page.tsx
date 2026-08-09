@@ -53,15 +53,17 @@ function LoginForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="label">Phone Number</label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-semibold">+91</span>
+              <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-orange-500 focus-within:border-orange-500 bg-white">
+                <span className="flex items-center px-3.5 bg-slate-100 border-r border-slate-200 text-slate-600 text-sm font-bold select-none">
+                  +91
+                </span>
                 <input
                   type="tel"
                   maxLength={10}
                   placeholder="9876543210"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, '') })}
-                  className="input pl-12"
+                  className="w-full px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 font-medium outline-none bg-transparent"
                   required
                 />
               </div>
@@ -106,13 +108,6 @@ function LoginForm() {
             </Link>
           </p>
         </div>
-
-        <p className="text-center text-xs text-slate-500 mt-4 font-medium">
-          Admin?{' '}
-          <Link href="/admin/login" className="text-slate-600 hover:text-slate-900 underline font-semibold">
-            Admin login
-          </Link>
-        </p>
       </div>
     </div>
   );

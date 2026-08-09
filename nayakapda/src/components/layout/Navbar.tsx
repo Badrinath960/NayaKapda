@@ -15,11 +15,13 @@ export function Navbar() {
       <nav className="page-container flex items-center justify-between h-16">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <img
-            src="/logo.png"
-            alt="NayaKapda.com"
-            className="h-9 w-auto object-contain transition-transform group-hover:scale-105"
-          />
+          <div className="bg-slate-900 p-1 rounded-lg border border-slate-800 flex items-center justify-center shadow-xs">
+            <img
+              src="/logo.png"
+              alt="NayaKapda.com"
+              className="h-7 w-auto object-contain transition-transform group-hover:scale-105"
+            />
+          </div>
           <div className="flex flex-col">
             <span className="text-xl font-black text-slate-900 leading-none">
               NayaKapda<span className="text-orange-600">.com</span>

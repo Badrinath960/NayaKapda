@@ -8,9 +8,10 @@ A production-grade B2B wholesale apparel ecommerce platform for **NayaKapda.com*
 - **Website Name / Domain**: NayaKapda.com
 - **Proprietor / Owner**: Mr. Karan Rajput
 - **Primary Address**: Shop No-09, Wing-E, PM Avas Yojna, Near Ratri Bazar, New Sama Road, Vadodara, Gujarat - 390008, India
-- **Contact Numbers**: +91 8735045268 / +91 9825682631 / +91 7698752012
+- **WhatsApp Support (Primary)**: +91 8735045268
+- **Alternative Contact**: +91 7698752012
 - **Support Email**: support@nayakapda.com
-- **Official Brand Logo**: `/logo.png` (Aligned in Navbar, Footer, Auth Pages, and Admin Header)
+- **Official Brand Logo**: `/logo.png` (Framed badge in Navbar, Footer, Auth Pages, and Admin Header)
 
 ---
 

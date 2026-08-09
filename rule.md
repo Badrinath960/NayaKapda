@@ -11,9 +11,11 @@
 
 ### Official Brand Assets & Contact
 - **Website Name / Brand**: `NayaKapda.com`
-- **Official Brand Logo**: `/logo.png` (Aligned in Navbar, Footer, Auth, and Admin views)
-- **Primary Contact Numbers**: `+91 8735045268`, `+91 9825682631`, `+91 7698752012`
+- **Official Brand Logo**: `/logo.png` (Framed emblem badge in Navbar, Footer, Auth, and Admin views)
+- **WhatsApp Support (Primary)**: `+91 8735045268`
+- **Alternative Phone**: `+91 7698752012`
 - **Address**: Shop No-09, Wing-E, PM Avas Yojna, Near Ratri Bazar, New Sama Road, Vadodara, Gujarat - 390008, India
+- **Security Rule**: Never display `/admin` entry points or Admin Login links on public customer-facing auth pages (`/login`, `/register`).
 
 ---
 

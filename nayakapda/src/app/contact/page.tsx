@@ -56,9 +56,8 @@ export default function ContactPage() {
                 </div>
                 <p className="font-bold text-slate-900 text-sm">Phone Numbers</p>
                 <div className="space-y-1 text-xs">
-                  <a href="tel:+918735045268" className="text-orange-600 font-bold hover:underline block">+91 87350 45268</a>
-                  <a href="tel:+919825682631" className="text-orange-600 font-bold hover:underline block">+91 98256 82631</a>
-                  <a href="tel:+917698752012" className="text-orange-600 font-bold hover:underline block">+91 76987 52012</a>
+                  <p className="text-slate-600 font-medium">WhatsApp: <a href="https://wa.me/918735045268" target="_blank" rel="noreferrer" className="text-emerald-600 font-bold hover:underline">+91 87350 45268</a></p>
+                  <p className="text-slate-600 font-medium">Alt: <a href="tel:+917698752012" className="text-slate-900 font-bold hover:underline">+91 76987 52012</a></p>
                 </div>
               </div>
 
