@@ -7,17 +7,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Brand Col — 5 columns on large screens for proper spacing */}
           <div className="lg:col-span-5 space-y-4">
-            <Link href="/" className="inline-flex items-center gap-2.5 group">
-              <div className="bg-slate-900 p-1.5 rounded-lg border border-slate-800 flex items-center justify-center shadow-xs">
-                <img
-                  src="/logo.png"
-                  alt="NayaKapda.com"
-                  className="h-7 w-auto object-contain"
-                />
-              </div>
-              <span className="text-xl font-black text-slate-900 leading-none">
-                NayaKapda<span className="text-orange-600">.com</span>
-              </span>
+            <Link href="/" className="inline-block py-1">
+              <img
+                src="/logo.png"
+                alt="NayaKapda.com — B2B Wholesale Apparel"
+                className="h-10 sm:h-11 w-auto object-contain"
+              />
             </Link>
 
             <p className="text-xs text-slate-500 leading-relaxed font-medium max-w-sm">

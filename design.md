@@ -10,7 +10,8 @@ This document describes the technical architecture, component design, API contra
 - **Primary Location**: Shop No-09, Wing-E, PM Avas Yojna, Near Ratri Bazar, New Sama Road, Vadodara, Gujarat - 390008, India
 - **WhatsApp Support (Primary)**: +91 8735045268
 - **Alternative Phone**: +91 7698752012
-- **Official Brand Logo**: `/logo.png` (Framed emblem badge in Header, Footer, Authentication pages, and Admin panel)
+- **Official Brand Logo**: `/logo.png` (Horizontal Light Theme Logo — rendered as standalone image, text logo removed)
+- **Mobile Navbar Layout**: Hamburger menu toggle is strictly positioned on the LEFT side of the navbar on mobile view.
 - **Security Constraint**: Customer login page `/login` MUST NOT show links or entry points to `/admin/login`.
 
 The platform is a full-stack Next.js application deployed to Vercel with PostgreSQL (Neon). It consists of two surfaces: a customer-facing Storefront and a role-gated Admin Panel. The primary ordering mechanism is the Size × Quantity Matrix, providing real-time tier-based pricing, quantity-multiple validation, and bulk cart operations.

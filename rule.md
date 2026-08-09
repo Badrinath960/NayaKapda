@@ -11,7 +11,8 @@
 
 ### Official Brand Assets & Contact
 - **Website Name / Brand**: `NayaKapda.com`
-- **Official Brand Logo**: `/logo.png` (Framed emblem badge in Navbar, Footer, Auth, and Admin views)
+- **Official Brand Logo**: `/logo.png` (Horizontal Light Theme Logo — image only, accompanying text logo removed)
+- **Mobile Navbar Layout**: Hamburger menu icon MUST be positioned on the LEFT side of mobile view (<768px).
 - **WhatsApp Support (Primary)**: `+91 8735045268`
 - **Alternative Phone**: `+91 7698752012`
 - **Address**: Shop No-09, Wing-E, PM Avas Yojna, Near Ratri Bazar, New Sama Road, Vadodara, Gujarat - 390008, India

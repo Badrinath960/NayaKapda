@@ -36,12 +36,12 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 text-slate-900">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <img src="/logo.png" alt="NayaKapda.com" className="h-9 w-auto object-contain" />
-            <span className="text-2xl font-black text-slate-900">NayaKapda<span className="text-orange-600">.com</span></span>
+        {/* Logo — Image logo only */}
+        <div className="text-center mb-6">
+          <Link href="/" className="inline-block">
+            <img src="/logo.png" alt="NayaKapda.com" className="h-12 w-auto mx-auto object-contain" />
           </Link>
-          <p className="text-slate-500 mt-1 text-xs font-semibold">Admin Panel</p>
+          <p className="text-slate-500 mt-2 text-xs font-semibold">Admin Panel</p>
         </div>
 
         <div className="card p-8 bg-white border-slate-200 shadow-sm">

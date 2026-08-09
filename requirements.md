@@ -11,7 +11,8 @@ A production-grade B2B wholesale apparel ecommerce platform for **NayaKapda.com*
 - **WhatsApp Support (Primary)**: +91 8735045268
 - **Alternative Contact**: +91 7698752012
 - **Support Email**: support@nayakapda.com
-- **Official Brand Logo**: `/logo.png` (Framed badge in Navbar, Footer, Auth Pages, and Admin Header)
+- **Official Brand Logo**: `/logo.png` (Horizontal Light Theme Logo — image only, text logo removed)
+- **Mobile Navbar Layout**: Hamburger menu icon MUST be positioned on the LEFT side on mobile view (<768px)
 
 ---
 

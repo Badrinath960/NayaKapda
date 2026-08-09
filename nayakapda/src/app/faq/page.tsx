@@ -12,7 +12,7 @@ export default async function FAQPage() {
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Navbar />
       <main className="flex-grow">
-        <div className="page-container py-12 max-w-3xl mx-auto">
+        <div className="page-container content-wrapper max-w-3xl mx-auto">
           <h1 className="text-4xl font-black mb-2 text-center text-slate-900">Frequently Asked Questions</h1>
           <p className="text-slate-600 text-sm text-center mb-10 font-medium">Everything you need to know about ordering from NayaKapda.</p>
 

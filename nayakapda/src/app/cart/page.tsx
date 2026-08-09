@@ -101,7 +101,7 @@ export default function CartPage() {
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Navbar />
       <main className="flex-grow">
-        <div className="page-container py-10">
+        <div className="page-container content-wrapper">
           <h1 className="text-3xl font-black mb-8 text-slate-900">Your Shopping Cart</h1>
 
           {items.length === 0 ? (

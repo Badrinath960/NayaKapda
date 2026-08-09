@@ -33,7 +33,7 @@ export default async function PricingPage({ searchParams }: Props) {
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Navbar />
       <main className="flex-grow">
-        <div className="page-container py-12">
+        <div className="page-container content-wrapper">
           {/* Header */}
           <div className="text-center mb-10">
             <h1 className="text-4xl font-black text-slate-900 mb-3">Volume Pricing</h1>

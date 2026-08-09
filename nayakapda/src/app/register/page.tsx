@@ -41,12 +41,12 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 text-slate-900 py-10">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2.5">
-            <img src="/logo.png" alt="NayaKapda.com" className="h-10 w-auto object-contain" />
-            <span className="text-3xl font-black text-slate-900">NayaKapda<span className="text-orange-600">.com</span></span>
+        {/* Logo — Image logo only */}
+        <div className="text-center mb-6">
+          <Link href="/" className="inline-block">
+            <img src="/logo.png" alt="NayaKapda.com" className="h-14 w-auto mx-auto object-contain" />
           </Link>
-          <p className="text-slate-500 mt-1 text-xs font-semibold">Bulk Apparel Platform</p>
+          <p className="text-slate-500 mt-2 text-xs font-semibold">Bulk Apparel Platform</p>
         </div>
 
         <div className="card p-8 bg-white border-slate-200 shadow-sm">

@@ -31,12 +31,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <aside className="w-60 flex-shrink-0 border-r border-slate-200 bg-white flex flex-col shadow-xs">
         <div className="p-5 border-b border-slate-200">
-          <Link href="/" className="flex items-center gap-2 group">
-            <img src="/logo.png" alt="NayaKapda.com" className="h-8 w-auto object-contain" />
-            <div>
-              <span className="text-lg font-black text-slate-900 leading-none">NayaKapda<span className="text-orange-600">.com</span></span>
-              <p className="text-[10px] text-slate-500 font-semibold mt-0.5">Admin Panel</p>
-            </div>
+          <Link href="/" className="block">
+            <img src="/logo.png" alt="NayaKapda.com" className="h-9 w-auto object-contain mb-1" />
+            <p className="text-[10px] text-slate-500 font-semibold">Admin Panel</p>
           </Link>
         </div>
 
