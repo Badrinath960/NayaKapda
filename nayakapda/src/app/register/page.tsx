@@ -178,7 +178,7 @@ export default function RegisterPage() {
                       required
                     />
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-1 font-medium">We will send a 6-digit OTP via SMS to verify this number.</p>
+                  <p className="text-[11px] text-slate-500 mt-1 font-medium">We will send a 6-digit OTP to verify this number.</p>
                 </div>
 
                 <div>
@@ -218,7 +218,7 @@ export default function RegisterPage() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
-                      Sending SMS OTP...
+                      Sending OTP...
                     </span>
                   ) : (
                     'Verify Mobile & Register →'
@@ -236,7 +236,7 @@ export default function RegisterPage() {
               phone={form.phone}
               purpose="REGISTER"
               title="Verify Mobile Number"
-              description={`Enter the 6-digit SMS OTP sent to +91 ${form.phone} to complete registration.`}
+              description={`Enter the 6-digit OTP sent to +91 ${form.phone} to complete registration.`}
               loading={loading}
               error={error}
               onVerify={handleVerifyOtp}

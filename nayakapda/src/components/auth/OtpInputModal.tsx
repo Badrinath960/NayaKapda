@@ -140,7 +140,7 @@ export function OtpInputModal({
         <p className="text-slate-500 text-xs mt-1.5 font-medium max-w-sm mx-auto">
           {description || (
             <>
-              Enter the 6-digit verification code sent to{' '}
+              Enter the 6-digit verification code sent via SMS to{' '}
               <strong className="text-slate-800 font-bold">{phoneMasked}</strong>
             </>
           )}

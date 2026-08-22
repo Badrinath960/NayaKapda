@@ -95,6 +95,5 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     challengeToken,
     phoneMasked,
     message: 'New or unrecognized device detected. Please verify with the 6-digit OTP sent to your phone.',
-    debugOtp: otpResult.debugOtp,
   });
 });

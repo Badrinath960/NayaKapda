@@ -49,8 +49,6 @@ export async function createOtpRecord({
   message?: string;
   retryAfterSeconds?: number;
   expiresAt?: Date;
-  debugOtp?: string;
-  gatewayConfigured?: boolean;
 }> {
   const now = new Date();
 
@@ -106,16 +104,13 @@ export async function createOtpRecord({
     },
   });
 
-  // Send OTP notification via SMS, WhatsApp, and Email
+  // Send OTP notification via SMS, WhatsApp, and/or Email
   await sendOtpNotification(phone, rawOtp, purpose, email ?? undefined);
-
-  const isDev = process.env.NODE_ENV === 'development';
 
   return {
     success: true,
     message: `OTP sent successfully to +91 ${phone}`,
     expiresAt,
-    debugOtp: isDev ? rawOtp : undefined,
   };
 }
 

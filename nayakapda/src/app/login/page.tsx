@@ -242,7 +242,7 @@ function LoginForm() {
               phone={form.phone}
               purpose="LOGIN_2FA"
               title="New Device Verification"
-              description={`New device detected. Enter the 6-digit OTP sent via SMS to ${phoneMasked} to verify and trust this device.`}
+              description={`New device detected. Enter the 6-digit OTP sent to ${phoneMasked} to verify and trust this device.`}
               loading={loading}
               error={error}
               onVerify={handleVerify2faOtp}
