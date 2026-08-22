@@ -28,7 +28,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     },
     {
       href: '/account/orders',
-      label: 'Order History',
+      label: 'Orders',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -46,7 +46,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     },
     {
       href: '/account/referral',
-      label: 'Referral Program',
+      label: 'Referral',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -61,18 +61,47 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Navbar />
-      <div className="flex-grow page-container py-8">
+      <div className="flex-grow page-container py-4 sm:py-8">
+        
+        {/* Mobile Sub-Navigation Bar (< md) */}
+        <div className="md:hidden mb-4 space-y-3">
+          <div className="flex items-center gap-3 p-3.5 bg-white rounded-2xl border border-slate-200 shadow-xs">
+            <div className="w-10 h-10 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center text-sm font-bold text-orange-700 shadow-xs">
+              {userName[0]?.toUpperCase() ?? 'U'}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-slate-900 text-sm truncate">{userName}</p>
+              {userPhone && (
+                <p className="text-slate-500 text-xs font-medium">+91 {userPhone}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="flex items-center gap-1.5 px-3 py-2 bg-white rounded-xl text-slate-700 font-bold text-xs border border-slate-200 shadow-xs hover:border-orange-500 hover:text-orange-600 whitespace-nowrap transition-all"
+              >
+                {link.icon}
+                <span>{link.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
         <div className="flex flex-col md:flex-row gap-6 items-start">
-          {/* Sidebar */}
-          <aside className="card p-5 w-full md:w-60 flex-shrink-0 bg-white border-slate-200 shadow-sm sticky top-24">
+          {/* Desktop Sidebar (>= md) */}
+          <aside className="hidden md:block card p-5 w-60 flex-shrink-0 bg-white border-slate-200 shadow-sm sticky top-24">
             {/* User info */}
             <div className="mb-5 pb-5 border-b border-slate-200">
               <div className="w-12 h-12 rounded-full bg-orange-50 border-2 border-orange-200 flex items-center justify-center text-lg font-black text-orange-600 mb-3">
                 {userName[0]?.toUpperCase() ?? 'U'}
               </div>
-              <p className="font-bold text-slate-900 text-sm">{userName}</p>
+              <p className="font-bold text-slate-900 text-sm truncate">{userName}</p>
               {userPhone && (
-                <p className="text-slate-500 text-xs mt-0.5 font-medium">{userPhone}</p>
+                <p className="text-slate-500 text-xs mt-0.5 font-medium">+91 {userPhone}</p>
               )}
             </div>
 
