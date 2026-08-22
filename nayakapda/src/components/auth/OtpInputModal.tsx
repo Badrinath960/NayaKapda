@@ -7,7 +7,6 @@ interface OtpInputModalProps {
   purpose: 'REGISTER' | 'LOGIN_2FA';
   title?: string;
   description?: string;
-  demoOtp?: string;
   loading?: boolean;
   error?: string | null;
   onVerify: (otp: string) => void;
@@ -20,7 +19,6 @@ export function OtpInputModal({
   purpose,
   title = 'Verify Your Phone Number',
   description,
-  demoOtp,
   loading = false,
   error = null,
   onVerify,
@@ -148,29 +146,6 @@ export function OtpInputModal({
           )}
         </p>
       </div>
-
-      {/* Demo / Unconfigured Gateway Notice */}
-      {demoOtp && (
-        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 text-center animate-fade-in-up">
-          <p className="font-bold text-amber-800 mb-0.5">ℹ️ Verification Code Helper</p>
-          <p className="text-slate-600 text-[11px] mb-2">
-            Code: <strong className="font-mono font-bold text-amber-900 text-sm tracking-widest bg-amber-100/90 px-2 py-0.5 rounded border border-amber-300">{demoOtp}</strong>
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              const chars = demoOtp.split('');
-              const newD = [...digits];
-              for (let i = 0; i < 6; i++) newD[i] = chars[i] || '';
-              setDigits(newD);
-              onVerify(demoOtp);
-            }}
-            className="text-orange-600 font-bold hover:underline text-xs"
-          >
-            Click to Auto-Fill & Continue →
-          </button>
-        </div>
-      )}
 
       {/* 6-Digit Inputs */}
       <div className="flex justify-center items-center gap-2 sm:gap-3 my-4">

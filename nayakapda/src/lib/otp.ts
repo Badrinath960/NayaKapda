@@ -106,27 +106,16 @@ export async function createOtpRecord({
     },
   });
 
-  // Send OTP notification via WhatsApp and/or Email
+  // Send OTP notification via SMS, WhatsApp, and Email
   await sendOtpNotification(phone, rawOtp, purpose, email ?? undefined);
 
-  const isWhatsAppSet = Boolean(
-    process.env.WHATSAPP_API_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID
-  );
-  const isDev = process.env.NODE_ENV !== 'production';
-
-  // Provide debugOtp if in dev OR if WhatsApp gateway credentials are not yet configured
-  const showDebugOtp = isDev || !isWhatsAppSet;
+  const isDev = process.env.NODE_ENV === 'development';
 
   return {
     success: true,
-    message: isWhatsAppSet
-      ? `OTP sent successfully to +91 ${phone}`
-      : email
-      ? `OTP sent to ${email} (WhatsApp gateway unconfigured)`
-      : `OTP generated for +91 ${phone}`,
+    message: `OTP sent successfully to +91 ${phone}`,
     expiresAt,
-    debugOtp: showDebugOtp ? rawOtp : undefined,
-    gatewayConfigured: isWhatsAppSet,
+    debugOtp: isDev ? rawOtp : undefined,
   };
 }
 

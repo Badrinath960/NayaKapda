@@ -73,7 +73,5 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     success: true,
     message: result.message,
     expiresAt: result.expiresAt,
-    debugOtp: result.debugOtp,
-    gatewayConfigured: result.gatewayConfigured,
   });
 });

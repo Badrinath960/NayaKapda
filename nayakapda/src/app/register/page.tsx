@@ -15,7 +15,6 @@ export default function RegisterPage() {
   const [form, setForm] = useState({ phone: '', password: '', name: '', email: '' });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [serverOtp, setServerOtp] = useState<string | undefined>();
 
   // Step 1: Submit details and initiate OTP
   const handleDetailsSubmit = async (e: React.FormEvent) => {
@@ -51,10 +50,6 @@ export default function RegisterPage() {
         setError(data.message || 'Failed to send OTP. Please try again.');
         setLoading(false);
         return;
-      }
-
-      if (data.debugOtp) {
-        setServerOtp(data.debugOtp);
       }
 
       // Transition to OTP verification step
@@ -133,8 +128,6 @@ export default function RegisterPage() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.message || 'Failed to resend OTP');
-      } else if (data.debugOtp) {
-        setServerOtp(data.debugOtp);
       }
     } catch {
       setError('Network error resending OTP.');
@@ -185,7 +178,7 @@ export default function RegisterPage() {
                       required
                     />
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-1 font-medium">We will send a 6-digit OTP to verify this number.</p>
+                  <p className="text-[11px] text-slate-500 mt-1 font-medium">We will send a 6-digit OTP via SMS to verify this number.</p>
                 </div>
 
                 <div>
@@ -225,7 +218,7 @@ export default function RegisterPage() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
-                      Sending OTP...
+                      Sending SMS OTP...
                     </span>
                   ) : (
                     'Verify Mobile & Register →'
@@ -243,8 +236,7 @@ export default function RegisterPage() {
               phone={form.phone}
               purpose="REGISTER"
               title="Verify Mobile Number"
-              description={`Enter the 6-digit OTP sent to +91 ${form.phone} to complete registration.`}
-              demoOtp={serverOtp}
+              description={`Enter the 6-digit SMS OTP sent to +91 ${form.phone} to complete registration.`}
               loading={loading}
               error={error}
               onVerify={handleVerifyOtp}

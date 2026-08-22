@@ -16,14 +16,20 @@ export async function sendSmsOtp({
   // 1. Try Fast2SMS if configured
   if (fast2smsKey) {
     try {
+      // Fast2SMS OTP Route
       const url = `https://www.fast2sms.com/dev/bulkV2?authorization=${fast2smsKey}&route=otp&variables_values=${otp}&numbers=${phone}`;
-      const res = await fetch(url, { method: 'GET' });
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'cache-control': 'no-cache',
+        },
+      });
       const data = await res.json();
-      if (data.return) {
-        console.log(`[SMS] Fast2SMS OTP sent to +91 ${phone}`);
+      if (data.return === true || data.status_code === 200) {
+        console.log(`[SMS] Fast2SMS OTP sent successfully to +91 ${phone}`);
         return true;
       }
-      console.warn(`[SMS] Fast2SMS error:`, data.message);
+      console.warn(`[SMS] Fast2SMS response status ${data.status_code}:`, data.message);
     } catch (err) {
       console.error('[SMS] Fast2SMS dispatch failed:', err);
     }
