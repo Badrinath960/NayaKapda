@@ -28,6 +28,7 @@ export const registerSchema = z.object({
 export const otpSendSchema = z.object({
   phone: phoneSchema,
   purpose: z.enum(['REGISTER', 'LOGIN_2FA']),
+  email: z.string().email('Invalid email').optional().nullable(),
 });
 
 export const otpVerifySchema = z.object({

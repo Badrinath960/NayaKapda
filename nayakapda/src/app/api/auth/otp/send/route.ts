@@ -24,7 +24,8 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     return NextResponse.json({ errors: validation.errors }, { status: 422 });
   }
 
-  const { phone, purpose } = validation.data;
+  const { phone, purpose, email } = validation.data;
+  let targetEmail = email;
 
   // Purpose-specific pre-checks
   if (purpose === 'REGISTER') {
@@ -50,9 +51,12 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
         { status: 404 }
       );
     }
+    if (!targetEmail && user.email) {
+      targetEmail = user.email;
+    }
   }
 
-  const result = await createOtpRecord({ phone, purpose });
+  const result = await createOtpRecord({ phone, purpose, email: targetEmail });
 
   if (!result.success) {
     return NextResponse.json(
@@ -70,5 +74,6 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     message: result.message,
     expiresAt: result.expiresAt,
     debugOtp: result.debugOtp,
+    gatewayConfigured: result.gatewayConfigured,
   });
 });

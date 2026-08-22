@@ -21,6 +21,7 @@ function LoginForm() {
   const [showOtp, setShowOtp] = useState(false);
   const [challengeToken, setChallengeToken] = useState<string | null>(null);
   const [phoneMasked, setPhoneMasked] = useState<string>('');
+  const [serverOtp, setServerOtp] = useState<string | undefined>();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +75,9 @@ function LoginForm() {
       if (checkData.status === 'NEW_DEVICE' && checkData.requiresOtp) {
         setChallengeToken(checkData.challengeToken);
         setPhoneMasked(checkData.phoneMasked || `+91 ${form.phone}`);
+        if (checkData.debugOtp) {
+          setServerOtp(checkData.debugOtp);
+        }
         setShowOtp(true);
         setLoading(false);
       }
@@ -149,6 +153,8 @@ function LoginForm() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.message || 'Failed to resend OTP');
+      } else if (data.debugOtp) {
+        setServerOtp(data.debugOtp);
       }
     } catch {
       setError('Network error resending OTP.');
@@ -243,6 +249,7 @@ function LoginForm() {
               purpose="LOGIN_2FA"
               title="New Device Verification"
               description={`New device detected. Enter the 6-digit OTP sent to ${phoneMasked} to verify and trust this device.`}
+              demoOtp={serverOtp}
               loading={loading}
               error={error}
               onVerify={handleVerify2faOtp}

@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({ phone: '', password: '', name: '', email: '' });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [serverOtp, setServerOtp] = useState<string | undefined>();
 
   // Step 1: Submit details and initiate OTP
   const handleDetailsSubmit = async (e: React.FormEvent) => {
@@ -37,7 +38,11 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/otp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: form.phone, purpose: 'REGISTER' }),
+        body: JSON.stringify({
+          phone: form.phone,
+          purpose: 'REGISTER',
+          email: form.email?.trim() || undefined,
+        }),
       });
 
       const data = await res.json();
@@ -46,6 +51,10 @@ export default function RegisterPage() {
         setError(data.message || 'Failed to send OTP. Please try again.');
         setLoading(false);
         return;
+      }
+
+      if (data.debugOtp) {
+        setServerOtp(data.debugOtp);
       }
 
       // Transition to OTP verification step
@@ -114,12 +123,18 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/otp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: form.phone, purpose: 'REGISTER' }),
+        body: JSON.stringify({
+          phone: form.phone,
+          purpose: 'REGISTER',
+          email: form.email?.trim() || undefined,
+        }),
       });
 
       const data = await res.json();
       if (!res.ok) {
         setError(data.message || 'Failed to resend OTP');
+      } else if (data.debugOtp) {
+        setServerOtp(data.debugOtp);
       }
     } catch {
       setError('Network error resending OTP.');
@@ -229,6 +244,7 @@ export default function RegisterPage() {
               purpose="REGISTER"
               title="Verify Mobile Number"
               description={`Enter the 6-digit OTP sent to +91 ${form.phone} to complete registration.`}
+              demoOtp={serverOtp}
               loading={loading}
               error={error}
               onVerify={handleVerifyOtp}

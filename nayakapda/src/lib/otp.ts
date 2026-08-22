@@ -30,22 +30,27 @@ export function generateSecureOtp(): string {
   return crypto.randomInt(100000, 999999).toString();
 }
 
+import { sendOtpEmail } from '@/lib/email';
+
 /**
  * Creates and records a new OTP in the database, applying rate limiting and cooldown
  */
 export async function createOtpRecord({
   phone,
   purpose,
+  email,
 }: {
   phone: string;
   purpose: OtpPurpose;
+  email?: string | null;
 }): Promise<{
   success: boolean;
   error?: string;
   message?: string;
   retryAfterSeconds?: number;
   expiresAt?: Date;
-  debugOtp?: string; // Only returned in non-production/test environments
+  debugOtp?: string;
+  gatewayConfigured?: boolean;
 }> {
   const now = new Date();
 
@@ -101,16 +106,27 @@ export async function createOtpRecord({
     },
   });
 
-  // Send OTP notification
-  await sendOtpNotification(phone, rawOtp, purpose);
+  // Send OTP notification via WhatsApp and/or Email
+  await sendOtpNotification(phone, rawOtp, purpose, email ?? undefined);
 
+  const isWhatsAppSet = Boolean(
+    process.env.WHATSAPP_API_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID
+  );
   const isDev = process.env.NODE_ENV !== 'production';
+
+  // Provide debugOtp if in dev OR if WhatsApp gateway credentials are not yet configured
+  const showDebugOtp = isDev || !isWhatsAppSet;
 
   return {
     success: true,
-    message: `OTP sent successfully to +91 ${phone}`,
+    message: isWhatsAppSet
+      ? `OTP sent successfully to +91 ${phone}`
+      : email
+      ? `OTP sent to ${email} (WhatsApp gateway unconfigured)`
+      : `OTP generated for +91 ${phone}`,
     expiresAt,
-    debugOtp: isDev ? rawOtp : undefined,
+    debugOtp: showDebugOtp ? rawOtp : undefined,
+    gatewayConfigured: isWhatsAppSet,
   };
 }
 
@@ -196,12 +212,13 @@ export async function verifyOtpRecord({
 }
 
 /**
- * Dispatch OTP via WhatsApp Business API or console logger in dev
+ * Dispatch OTP via WhatsApp Business API, Resend Email, and console logger
  */
 export async function sendOtpNotification(
   phone: string,
   otp: string,
-  purpose: OtpPurpose
+  purpose: OtpPurpose,
+  email?: string
 ): Promise<void> {
   const purposeText =
     purpose === 'REGISTER'
@@ -211,10 +228,11 @@ export async function sendOtpNotification(
   const bodyText = `Your NayaKapda ${purposeText} OTP is *${otp}*.\n\nThis OTP is valid for 10 minutes. Do not share this OTP with anyone.\n\n— Team NayaKapda.com`;
 
   console.log(`\n========================================`);
-  console.log(`🔐 [OTP DISPATCH] Phone: +91 ${phone} | Purpose: ${purpose}`);
+  console.log(`🔐 [OTP DISPATCH] Phone: +91 ${phone} | Purpose: ${purpose}${email ? ` | Email: ${email}` : ''}`);
   console.log(`👉 OTP CODE: [ ${otp} ] (Valid 10 mins)`);
   console.log(`========================================\n`);
 
+  // 1. WhatsApp Business API Dispatch
   try {
     await sendWhatsAppMessage({
       templateName: purpose === 'REGISTER' ? 'welcome' : 'order_confirmation',
@@ -227,5 +245,14 @@ export async function sendOtpNotification(
     });
   } catch (err) {
     console.warn(`[OTP] WhatsApp delivery failed or skipped:`, err);
+  }
+
+  // 2. Email Dispatch via Resend (if email is provided)
+  if (email) {
+    try {
+      await sendOtpEmail({ to: email, otp, phone, purpose });
+    } catch (err) {
+      console.warn(`[OTP] Email delivery failed:`, err);
+    }
   }
 }
