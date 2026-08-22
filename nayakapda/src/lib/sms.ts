@@ -17,7 +17,8 @@ export async function sendSmsOtp({
   if (twoFactorKey) {
     try {
       const cleanPhone = phone.replace(/\D/g, '').slice(-10);
-      const url = `https://2factor.in/API/V1/${twoFactorKey}/SMS/${cleanPhone}/${otp}`;
+      // Explicitly specify OTP1 (2Factor's standard transactional SMS template)
+      const url = `https://2factor.in/API/V1/${twoFactorKey}/SMS/${cleanPhone}/${otp}/OTP1`;
       const res = await fetch(url, { method: 'GET' });
       const data = await res.json();
       if (data.Status === 'Success') {
