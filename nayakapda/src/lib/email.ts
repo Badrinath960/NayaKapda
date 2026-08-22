@@ -19,12 +19,16 @@ export async function sendOtpEmail({
   to: string;
   otp: string;
   phone: string;
-  purpose: 'REGISTER' | 'LOGIN_2FA';
+  purpose: 'REGISTER' | 'LOGIN_2FA' | 'RESET_PASSWORD';
 }) {
   if (!to || !process.env.RESEND_API_KEY) return;
 
   const purposeText =
-    purpose === 'REGISTER' ? 'Account Registration' : 'New Device Verification (2FA)';
+    purpose === 'REGISTER'
+      ? 'Account Registration'
+      : purpose === 'RESET_PASSWORD'
+      ? 'Password Reset Request'
+      : 'New Device Verification (2FA)';
 
   try {
     await resend.emails.send({

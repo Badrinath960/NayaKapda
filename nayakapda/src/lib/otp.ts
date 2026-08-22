@@ -4,7 +4,7 @@ import { sendWhatsAppMessage } from '@/lib/whatsapp';
 import { sendOtpEmail } from '@/lib/email';
 import { sendSmsOtp } from '@/lib/sms';
 
-export type OtpPurpose = 'REGISTER' | 'LOGIN_2FA';
+export type OtpPurpose = 'REGISTER' | 'LOGIN_2FA' | 'RESET_PASSWORD';
 
 const OTP_EXPIRY_MINUTES = 10;
 const OTP_RESEND_COOLDOWN_SECONDS = 60;
@@ -207,6 +207,8 @@ export async function sendOtpNotification(
   const purposeText =
     purpose === 'REGISTER'
       ? 'account verification'
+      : purpose === 'RESET_PASSWORD'
+      ? 'password reset'
       : 'device login verification (2FA)';
 
   const bodyText = `Your NayaKapda ${purposeText} OTP is *${otp}*.\n\nThis OTP is valid for 10 minutes. Do not share this OTP with anyone.\n\n— Team NayaKapda.com`;

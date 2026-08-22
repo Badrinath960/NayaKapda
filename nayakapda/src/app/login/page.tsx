@@ -12,6 +12,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') ?? '/';
   const registered = searchParams.get('registered');
+  const resetSuccess = searchParams.get('reset');
 
   const [form, setForm] = useState({ phone: '', password: '' });
   const [error, setError] = useState<string | null>(null);
@@ -85,8 +86,6 @@ function LoginForm() {
 
   // 2FA OTP verification on new device
   const handleVerify2faOtp = async (otp: string) => {
-    if (!challengeToken) return;
-
     setError(null);
     setLoading(true);
 
@@ -109,27 +108,26 @@ function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || 'Invalid or expired OTP.');
+        setError(data.message || 'OTP verification failed');
         setLoading(false);
         return;
       }
 
-      // 2FA OTP verified! Complete NextAuth sign-in using verified token
-      const result = await signIn('credentials', {
+      // Log in with the short-lived verifiedToken issued after OTP verification
+      const loginResult = await signIn('credentials', {
         phone: form.phone,
-        password: '2fa-verified',
         verifiedToken: data.verifiedToken,
         redirect: false,
       });
 
-      setLoading(false);
-
-      if (result?.error) {
-        setError('Authentication error completing login.');
-      } else {
-        router.push(redirect);
-        router.refresh();
+      if (loginResult?.error) {
+        setError('Sign in failed after verification. Please try again.');
+        setLoading(false);
+        return;
       }
+
+      router.push(redirect);
+      router.refresh();
     } catch {
       setError('Verification failed. Please try again.');
       setLoading(false);
@@ -173,6 +171,12 @@ function LoginForm() {
             </div>
           )}
 
+          {resetSuccess && !showOtp && (
+            <div className="mb-4 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 text-center animate-fade-in-up">
+              ✓ Password reset successfully! Please sign in with your new password.
+            </div>
+          )}
+
           {!showOtp ? (
             <>
               <h1 className="text-2xl font-black mb-6 text-center text-slate-900">Welcome Back</h1>
@@ -197,7 +201,15 @@ function LoginForm() {
                 </div>
 
                 <div>
-                  <label className="label">Password</label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="label mb-0">Password</label>
+                    <Link
+                      href="/forgot-password"
+                      className="text-xs text-orange-600 hover:text-orange-700 font-semibold"
+                    >
+                      Forgot Password?
+                    </Link>
+                  </div>
                   <input
                     type="password"
                     placeholder="••••••••"

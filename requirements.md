@@ -66,6 +66,7 @@ A production-grade B2B wholesale apparel ecommerce platform for **NayaKapda.com*
 7. IF a user submits incorrect credentials, THEN THE System SHALL return an authentication error without revealing which field is incorrect.
 8. WHEN a user logs out, THE System SHALL invalidate the session and redirect to the home page.
 9. THE System SHALL support optional email address on the User record, with uniqueness enforced only when provided.
+10. THE System SHALL provide a Password Reset flow allowing users to reset their forgotten password by verifying their registered phone number via a 6-digit OTP (purpose: RESET_PASSWORD) and setting a new bcrypt-hashed password.
 
 ---
 

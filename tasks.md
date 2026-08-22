@@ -33,7 +33,8 @@ All code is TypeScript. Testing uses Vitest + @testing-library/react + fast-chec
   - Implement `POST /api/auth/verify-login-otp`: verify 2FA OTP, register TrustedDevice, issue verified token for NextAuth
   - Build reusable `OtpInputModal` component with auto-focus, paste handling, and countdown timer
   - Update `/register` and `/login` storefront pages with 2-step OTP verification
-  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9_
+  - Implement Phone OTP Password Reset (`/forgot-password`, `POST /api/auth/reset-password`)
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10_
 
   - [ ]* 3.1 Write property test for phone number validation (Property 1)
     - **Property 1: Phone number validation rejects invalid formats**

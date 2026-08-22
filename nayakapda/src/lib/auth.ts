@@ -57,6 +57,7 @@ export const authOptions: NextAuthOptions = {
 
         if (!user || !user.active) return null;
         if (user.role !== 'CUSTOMER') return null; // Admins use separate JWT
+        if (!password) return null;
 
         const isValid = await bcrypt.compare(password, user.passwordHash);
         if (!isValid) return null;

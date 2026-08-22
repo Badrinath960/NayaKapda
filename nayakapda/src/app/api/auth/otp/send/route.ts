@@ -40,7 +40,7 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
         { status: 409 }
       );
     }
-  } else if (purpose === 'LOGIN_2FA') {
+  } else if (purpose === 'LOGIN_2FA' || purpose === 'RESET_PASSWORD') {
     const user = await prisma.user.findUnique({ where: { phone } });
     if (!user || !user.active) {
       return NextResponse.json(

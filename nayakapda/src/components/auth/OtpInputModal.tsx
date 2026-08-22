@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 
 interface OtpInputModalProps {
   phone: string;
-  purpose: 'REGISTER' | 'LOGIN_2FA';
+  purpose: 'REGISTER' | 'LOGIN_2FA' | 'RESET_PASSWORD';
   title?: string;
   description?: string;
   loading?: boolean;

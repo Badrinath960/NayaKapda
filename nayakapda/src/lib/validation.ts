@@ -10,7 +10,7 @@ export const phoneSchema = z
 
 export const loginSchema = z.object({
   phone: phoneSchema,
-  password: z.string().min(1, 'Password is required'),
+  password: z.string().optional(),
   verifiedToken: z.string().optional(),
 });
 
@@ -27,14 +27,20 @@ export const registerSchema = z.object({
 
 export const otpSendSchema = z.object({
   phone: phoneSchema,
-  purpose: z.enum(['REGISTER', 'LOGIN_2FA']),
+  purpose: z.enum(['REGISTER', 'LOGIN_2FA', 'RESET_PASSWORD']),
   email: z.string().email('Invalid email').optional().nullable(),
 });
 
 export const otpVerifySchema = z.object({
   phone: phoneSchema,
-  purpose: z.enum(['REGISTER', 'LOGIN_2FA']),
+  purpose: z.enum(['REGISTER', 'LOGIN_2FA', 'RESET_PASSWORD']),
   otp: z.string().regex(/^\d{6}$/, 'OTP must be a 6-digit number'),
+});
+
+export const resetPasswordSchema = z.object({
+  phone: phoneSchema,
+  otp: z.string().regex(/^\d{6}$/, 'OTP must be a 6-digit number'),
+  newPassword: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 export const loginCheckSchema = z.object({
