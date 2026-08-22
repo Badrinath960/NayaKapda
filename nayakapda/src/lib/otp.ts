@@ -1,6 +1,8 @@
 import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { sendWhatsAppMessage } from '@/lib/whatsapp';
+import { sendOtpEmail } from '@/lib/email';
+import { sendSmsOtp } from '@/lib/sms';
 
 export type OtpPurpose = 'REGISTER' | 'LOGIN_2FA';
 
@@ -29,8 +31,6 @@ export function hashOtp(phone: string, otp: string): string {
 export function generateSecureOtp(): string {
   return crypto.randomInt(100000, 999999).toString();
 }
-
-import { sendOtpEmail } from '@/lib/email';
 
 /**
  * Creates and records a new OTP in the database, applying rate limiting and cooldown
@@ -254,5 +254,12 @@ export async function sendOtpNotification(
     } catch (err) {
       console.warn(`[OTP] Email delivery failed:`, err);
     }
+  }
+
+  // 3. SMS Dispatch via Fast2SMS / 2Factor (if configured)
+  try {
+    await sendSmsOtp({ phone, otp });
+  } catch (err) {
+    console.warn(`[OTP] SMS delivery failed or skipped:`, err);
   }
 }
