@@ -78,16 +78,42 @@ graph TD
 ```mermaid
 sequenceDiagram
     participant C as Customer Browser
-    participant N as NextAuth.js
+    participant API as NayaKapda Auth API
+    participant OTP as OTP Service
     participant DB as PostgreSQL
+    participant N as NextAuth.js
     participant A as Admin Browser
     participant J as JWT Middleware
 
-    C->>N: POST /api/auth/signin (phone + password)
-    N->>DB: lookup User by phone
-    DB-->>N: User record
+    Note over C,N: Registration Flow (OTP-Verified)
+    C->>API: POST /api/auth/otp/send { phone, purpose: "REGISTER" }
+    API->>OTP: Generate 6-digit OTP & hash
+    OTP->>DB: Save to OtpVerification
+    OTP-->>C: WhatsApp/SMS OTP Dispatch
+    C->>API: POST /api/auth/register { phone, password, otp, deviceHash }
+    API->>DB: Verify OTP, Create User, Cart & TrustedDevice
+    API-->>C: Account created
+    C->>N: signIn('credentials', { phone, password })
     N-->>C: Set-Cookie: next-auth.session-token
 
+    Note over C,N: Login Flow (Device Recognition & 2FA)
+    C->>API: POST /api/auth/login-check { phone, password, deviceHash }
+    API->>DB: Verify credentials & check TrustedDevice
+    alt Trusted Device
+        API-->>C: { status: "TRUSTED", requiresOtp: false }
+        C->>N: signIn('credentials', { phone, password })
+        N-->>C: Set-Cookie: next-auth.session-token
+    else New Device
+        API->>OTP: Generate 6-digit OTP (LOGIN_2FA)
+        API-->>C: { status: "NEW_DEVICE", requiresOtp: true, challengeToken }
+        C->>API: POST /api/auth/verify-login-otp { phone, otp, challengeToken }
+        API->>DB: Verify OTP & register TrustedDevice
+        API-->>C: { verifiedToken }
+        C->>N: signIn('credentials', { phone, verifiedToken })
+        N-->>C: Set-Cookie: next-auth.session-token
+    end
+
+    Note over A,J: Admin Authentication
     A->>J: POST /api/admin/auth/login (email + password)
     J->>DB: lookup Admin User
     DB-->>J: Admin with role

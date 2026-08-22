@@ -87,6 +87,14 @@
 21. `FAQEntry` — FAQ question-answer pairs
 22. `NotificationLog` — WhatsApp delivery failure records
 23. `AuditLog` — Admin action audit trail
+24. `OtpVerification` — Secure 6-digit OTPs with HMAC-SHA256 hash, 10-min expiry, 60s cooldown, 5 attempts max
+25. `TrustedDevice` — Device fingerprint registry for 2FA bypass on recognized/trusted devices
+
+### Auth & Security Rules
+- **Registration**: Requires mobile number OTP verification before creating the user in database.
+- **Login 2FA**: Recognizes trusted devices. If a new/unrecognized device logs in, an OTP challenge is issued before granting session.
+- **Credential Storage**: Passwords hashed with `bcrypt` (cost factor 12); OTPs hashed with HMAC-SHA256. Never store raw OTPs or plaintext passwords in DB.
+- **Rate Limiting**: Apply server-side IP and phone rate limits to all OTP send/verify endpoints.
 
 ---
 

@@ -70,8 +70,39 @@ model User {
   creditLine             CreditLine?
   referral               Referral?
   stockAlertSubscriptions StockAlertSubscription[]
+  trustedDevices         TrustedDevice[]
 
   @@index([email])
+}
+
+model OtpVerification {
+  id          String   @id @default(cuid())
+  phone       String
+  otpHash     String
+  purpose     String   // "REGISTER" | "LOGIN_2FA"
+  attempts    Int      @default(0)
+  maxAttempts Int      @default(5)
+  expiresAt   DateTime
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([phone, purpose])
+  @@index([expiresAt])
+}
+
+model TrustedDevice {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceHash String   // Unique hash of device token / fingerprint
+  deviceName String?  // e.g. "Chrome on Windows", "Mobile Safari"
+  ipAddress  String?
+  lastUsedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, deviceHash])
+  @@index([userId])
 }
 
 model Address {

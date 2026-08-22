@@ -59,11 +59,13 @@ A production-grade B2B wholesale apparel ecommerce platform for **NayaKapda.com*
 
 1. WHEN a user submits a registration form, THE Validator SHALL verify that the phone number is exactly 10 digits and starts with 6, 7, 8, or 9.
 2. IF a user submits a phone number that fails validation, THEN THE System SHALL return a descriptive error message without creating an account.
-3. WHEN a user registers successfully, THE System SHALL create a User record with role CUSTOMER and send a WhatsApp welcome message.
-4. WHEN a registered user submits valid credentials, THE System SHALL create an authenticated session via NextAuth.js.
-5. IF a user submits incorrect credentials, THEN THE System SHALL return an authentication error without revealing which field is incorrect.
-6. WHEN a user logs out, THE System SHALL invalidate the session and redirect to the home page.
-7. THE System SHALL support optional email address on the User record, with uniqueness enforced only when provided.
+3. THE System SHALL require mobile number verification via a 6-digit OTP before account creation is completed, enforcing a 10-minute expiry, a 60-second resend cooldown, and a maximum of 5 attempts.
+4. WHEN a user registers and verifies OTP successfully, THE System SHALL create a User record with role CUSTOMER, register the client as a TrustedDevice, and send a WhatsApp welcome message.
+5. WHEN a registered user logs in from a trusted/recognized device with valid credentials, THE System SHALL create an authenticated session immediately without requiring OTP.
+6. WHEN a registered user logs in from a new/unrecognized device, THE System SHALL detect the new device, issue a 6-digit OTP challenge, verify the OTP, register the device as a TrustedDevice, and create an authenticated session.
+7. IF a user submits incorrect credentials, THEN THE System SHALL return an authentication error without revealing which field is incorrect.
+8. WHEN a user logs out, THE System SHALL invalidate the session and redirect to the home page.
+9. THE System SHALL support optional email address on the User record, with uniqueness enforced only when provided.
 
 ---
 

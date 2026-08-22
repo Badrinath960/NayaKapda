@@ -10,7 +10,8 @@ export const phoneSchema = z
 
 export const loginSchema = z.object({
   phone: phoneSchema,
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(1, 'Password is required'),
+  verifiedToken: z.string().optional(),
 });
 
 export const registerSchema = z.object({
@@ -19,6 +20,35 @@ export const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').optional(),
   email: z.string().email('Invalid email address').optional().nullable(),
   referralCode: z.string().optional(),
+  otp: z.string().regex(/^\d{6}$/, 'OTP must be a 6-digit number').optional(),
+  deviceHash: z.string().optional(),
+  deviceName: z.string().optional(),
+});
+
+export const otpSendSchema = z.object({
+  phone: phoneSchema,
+  purpose: z.enum(['REGISTER', 'LOGIN_2FA']),
+});
+
+export const otpVerifySchema = z.object({
+  phone: phoneSchema,
+  purpose: z.enum(['REGISTER', 'LOGIN_2FA']),
+  otp: z.string().regex(/^\d{6}$/, 'OTP must be a 6-digit number'),
+});
+
+export const loginCheckSchema = z.object({
+  phone: phoneSchema,
+  password: z.string().min(1, 'Password is required'),
+  deviceHash: z.string().optional(),
+  deviceName: z.string().optional(),
+});
+
+export const loginVerifyOtpSchema = z.object({
+  phone: phoneSchema,
+  otp: z.string().regex(/^\d{6}$/, 'OTP must be a 6-digit number'),
+  challengeToken: z.string().min(1, 'Challenge token is required'),
+  deviceHash: z.string().optional(),
+  deviceName: z.string().optional(),
 });
 
 // ─────────────────────────────────────────
