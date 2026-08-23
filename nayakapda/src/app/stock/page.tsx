@@ -129,9 +129,9 @@ export default function StockPage() {
               <p className="text-slate-500 text-xs font-medium mb-3">
                 Showing {filtered.length} of {variants.length} variants
               </p>
-              <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
-                <div className="table-container border-0 rounded-none shadow-none">
-                  <table className="table">
+              <div className="card overflow-hidden bg-white border-slate-200 shadow-xs">
+                <div className="table-container border-0 rounded-none shadow-none overflow-x-auto">
+                  <table className="table min-w-[600px]">
                     <thead>
                       <tr>
                         <th>SKU</th>

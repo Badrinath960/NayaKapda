@@ -711,3 +711,45 @@ src/
     ├── orders/place-order.test.ts
     └── discount/validate.test.ts
 ```
+
+---
+
+## UI/UX Design System & Mobile Responsive Architecture
+
+### Design Tokens & Palette
+
+| Token | CSS Variable / Value | Purpose |
+|-------|----------------------|---------|
+| Page Canvas | `#f8fafc` (`slate-50`) | Soft light neutral background across all pages |
+| Surface / Cards | `#ffffff` (`white`) | Clean card containers with `border-slate-200` |
+| Primary Brand | `#f97316` (`orange-500`) | Main CTA buttons, active tabs, and key accents |
+| Brand Hover | `#ea580c` (`orange-600`) | Hover state for interactive primary actions |
+| Text Primary | `#0f172a` (`slate-900`) | High-contrast body copy and headings |
+| Text Muted | `#64748b` (`slate-500`) | Secondary metadata, labels, and timestamps |
+| Border | `#e2e8f0` (`slate-200`) | Crisp surface borders |
+
+### Component UX Specifications
+
+1. **Global Header & Navigation (`Navbar.tsx`)**:
+   * Desktop (>= 768px): Inline navigation links, cart badge, user profile menu with popover dropdown.
+   * Mobile (< 768px): Hamburger toggle strictly positioned on the LEFT, standalone image logo (`/logo.png`), cart icon with quantity badge, and profile button. Slide-out drawer menu provides full navigation, account shortcuts, and sign-out.
+
+2. **Size × Quantity Matrix (`SizeQuantityMatrix.tsx`)**:
+   * Horizontal color selection tabs with badge indicators showing quantity per color.
+   * Matrix grid showing size badge, live stock count, quantity input with steppers, and row subtotal.
+   * Out-of-stock rows rendered with subtle diagonal hatching pattern (`repeating-linear-gradient`).
+   * Real-time price resolution against volume pricing slabs.
+   * Sticky summary bar showing total pieces, active tier badge, resolved unit price, subtotal, and Add to Cart CTA.
+
+3. **Multi-Step Checkout (`checkout/page.tsx`)**:
+   * Step 1: Address selection / creation with 10-digit Indian phone and 6-digit pincode validation.
+   * Step 2: Shipping method calculation based on piece count and delivery pincode.
+   * Step 3: Order review with discount code application, 5% GST breakdown, and tax calculation.
+   * Step 4: Razorpay online prepaid payment gateway integration.
+
+4. **Admin Suite Mobile Responsiveness (`src/app/admin/*`)**:
+   * Desktop: Fixed 256px sticky sidebar with dark-slate tone, breadcrumbs, and stats cards.
+   * Mobile (< 768px): Sticky mobile topbar with hamburger button, "Admin" role pill badge, and 1-tap Sign Out. Sliding drawer menu with touch-friendly navigation links.
+   * All administrative tables wrapped in `overflow-x-auto` with `min-w-[500px..700px]`.
+   * Form layouts collapse gracefully into 1-column layouts on phones.
+

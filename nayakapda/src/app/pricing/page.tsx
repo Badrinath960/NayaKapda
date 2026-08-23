@@ -135,16 +135,18 @@ export default async function PricingPage({ searchParams }: Props) {
             )}
           </div>
 
-          <div className="mt-12 card p-8 text-center bg-gradient-to-r from-orange-50 via-white to-orange-50 border-orange-200 shadow-sm">
+          <div className="mt-12 card p-8 text-center bg-gradient-to-r from-orange-50 via-white to-orange-50 border-orange-200 shadow-xs">
             <h2 className="text-2xl font-black text-slate-900 mb-2">Need a Custom Quote?</h2>
-            <p className="text-slate-600 text-xs font-medium mb-6">For orders above 1,000 pieces or special requirements, contact us directly.</p>
+            <p className="text-slate-600 text-xs font-medium mb-6">
+              For orders above 1,000 pieces or special custom branding requirements, chat directly with us on WhatsApp.
+            </p>
             <a
-              href="https://wa.me/919999999901"
+              href="https://wa.me/918735045268"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary py-3 px-6 text-xs font-bold shadow-md"
+              className="btn-primary py-3 px-6 text-xs font-bold shadow-xs inline-flex items-center gap-2"
             >
-              💬 Request Custom Quote
+              <span>💬</span> Chat on WhatsApp (+91 87350 45268)
             </a>
           </div>
         </div>

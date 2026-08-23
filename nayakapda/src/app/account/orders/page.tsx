@@ -62,8 +62,8 @@ export default async function AccountOrdersPage() {
           </Link>
         </div>
       ) : (
-        <div className="table-container bg-white border-slate-200 shadow-sm">
-          <table className="table">
+        <div className="table-container bg-white border-slate-200 shadow-xs overflow-x-auto">
+          <table className="table min-w-[640px]">
             <thead>
               <tr>
                 <th>Order ID</th>

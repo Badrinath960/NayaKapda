@@ -153,12 +153,12 @@ export default function ShippingCalculatorPage() {
                       Contact us on WhatsApp for custom shipping arrangements.
                     </p>
                     <a
-                      href="https://wa.me/919999999901"
+                      href="https://wa.me/918735045268"
                       target="_blank"
                       rel="noreferrer"
-                      className="btn-primary py-2 px-4 text-xs font-bold shadow-md"
+                      className="btn-primary py-2 px-4 text-xs font-bold shadow-xs inline-flex items-center gap-2"
                     >
-                      WhatsApp Us
+                      <span>💬</span> WhatsApp Us (+91 87350 45268)
                     </a>
                   </div>
                 ) : (

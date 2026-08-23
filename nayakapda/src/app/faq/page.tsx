@@ -30,11 +30,16 @@ export default async function FAQPage() {
             ))}
           </div>
 
-          <div className="mt-12 card p-8 text-center bg-gradient-to-r from-orange-50 via-white to-orange-50 border-orange-200 shadow-sm space-y-4">
+          <div className="mt-12 card p-8 text-center bg-gradient-to-r from-orange-50 via-white to-orange-50 border-orange-200 shadow-xs space-y-4">
             <h2 className="text-xl font-black text-slate-900">Still have questions?</h2>
-            <p className="text-slate-600 text-xs font-medium">Our team typically responds within 2 hours on WhatsApp.</p>
-            <a href="https://wa.me/919999999901" target="_blank" rel="noopener noreferrer" className="btn-primary py-2.5 px-6 text-xs font-bold shadow-md inline-block">
-              💬 Chat on WhatsApp
+            <p className="text-slate-600 text-xs font-medium">Our team is available on WhatsApp for quick responses.</p>
+            <a
+              href="https://wa.me/918735045268"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary py-2.5 px-6 text-xs font-bold shadow-xs inline-flex items-center gap-2"
+            >
+              <span>💬</span> Chat on WhatsApp (+91 87350 45268)
             </a>
           </div>
         </div>

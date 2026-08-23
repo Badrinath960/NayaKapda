@@ -434,3 +434,18 @@ A production-grade B2B wholesale apparel ecommerce platform for **NayaKapda.com*
 2. THE System SHALL consistently utilize NayaKapda Warm Orange (`#F97316`) as the primary brand action color for main CTA buttons, tab selections, and key interactive highlights.
 3. THE System's Size × Quantity Matrix SHALL render quantity input cells with white backgrounds, dark crisp numbers, clear focus rings (`#F97316`), and subtle diagonal hatching for out-of-stock variants.
 4. THE Admin Panel SHALL feature a clean light white sidebar layout, white data table containers, and clear action badges.
+
+---
+
+### Requirement 27: Admin Panel Mobile & Tablet Responsiveness
+
+**User Story:** As an administrator or staff member on the go, I want the complete admin panel to be fully responsive and touch-friendly on mobile phones and tablets, so that I can manage orders, catalog items, and customers from any device.
+
+#### Acceptance Criteria
+
+1. WHILE accessed on mobile screens (< 768px), THE Admin Panel SHALL render a sticky top header with: a left hamburger menu toggle, centered brand logo with "Admin" badge, user avatar, and quick 1-tap Sign Out action.
+2. WHEN the hamburger menu is tapped, THE Admin Panel SHALL open a sliding navigation drawer with smooth animations, backdrop blur overlay, profile summary, and touch-friendly route links.
+3. ALL Admin tables (Orders, Order Details, Product Catalog, Edit Product Variants, Categories, Customers, Discounts, Analytics, and Content) SHALL be wrapped in horizontal touch-scrolling containers with appropriate minimum widths (`min-w-[500px..700px]`), preventing column crushing or horizontal cutoff.
+4. ALL Admin forms (New Product, Edit Product, Add Category, Create Discount, FAQ, and Shipping Methods) SHALL stack into 1-column layouts on small screens (`grid-cols-1 sm:grid-cols-2/3`), providing comfortable touch targets.
+5. On touch devices, image deletion and table action buttons SHALL remain accessible and tap-friendly without requiring mouse-hover states.
+

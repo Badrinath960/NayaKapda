@@ -56,7 +56,7 @@ You have the right to:
 To exercise these rights, contact us at support@nayakapda.com.
 
 ## 7. Contact Us
-For privacy-related concerns, email us at **support@nayakapda.com** or WhatsApp us at **+91 9999999901**.
+For privacy-related concerns, email us at **support@nayakapda.com** or WhatsApp us at **+91 87350 45268**.
     `.trim(),
   },
   shipping: {
@@ -74,8 +74,8 @@ NayaKapda ships bulk orders across all 29 states and Union Territories of India.
 ## Delivery Timeframes
 | Zone | Estimated Delivery |
 |------|-------------------|
-| Mumbai (local) | 1–2 business days |
-| Maharashtra | 2–3 business days |
+| Gujarat (local) | 1–2 business days |
+| Maharashtra & Delhi NCR | 2–3 business days |
 | Major metros | 3–4 business days |
 | Rest of India | 4–7 business days |
 | Remote areas | 7–10 business days |
@@ -97,7 +97,7 @@ Once your order is dispatched, you will receive a tracking number via WhatsApp/S
 If your order arrives damaged or is lost in transit, please contact us within **48 hours of delivery** with photos. We will arrange a replacement or refund as applicable.
 
 ## Contact
-For shipping queries: WhatsApp **+91 9999999901** or email **support@nayakapda.com**
+For shipping queries: WhatsApp **+91 87350 45268** or email **support@nayakapda.com**
     `.trim(),
   },
   returns: {
@@ -133,7 +133,7 @@ We do not accept returns for:
 - Processing time: 5–7 business days after approval
 
 ## Contact for Returns
-WhatsApp: **+91 9999999901**
+WhatsApp: **+91 87350 45268**
 Email: **support@nayakapda.com**
     `.trim(),
   },
@@ -176,7 +176,7 @@ All content on NayaKapda — including logos, product descriptions, and pricing 
 NayaKapda shall not be liable for indirect, incidental, or consequential damages arising from use of our platform. Our maximum liability is limited to the value of the disputed order.
 
 ## 8. Governing Law
-These terms are governed by the laws of **Maharashtra, India**. Disputes shall be subject to the exclusive jurisdiction of courts in **Mumbai, Maharashtra**.
+These terms are governed by the laws of **Gujarat, India**. Disputes shall be subject to the exclusive jurisdiction of courts in **Vadodara, Gujarat**.
 
 ## 9. Changes to Terms
 We may update these terms at any time. Continued use of the platform constitutes acceptance of updated terms.
