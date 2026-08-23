@@ -134,12 +134,14 @@ export default function AdminCategoriesPage() {
   };
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* Toast */}
       {toast && (
         <div
           className={`fixed top-5 right-5 z-50 px-4 py-3 rounded-xl border text-xs font-bold shadow-lg ${
-            toast.type === 'ok' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200'
+            toast.type === 'ok'
+              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+              : 'bg-rose-50 text-rose-800 border-rose-200'
           }`}
         >
           {toast.msg}
@@ -147,16 +149,19 @@ export default function AdminCategoriesPage() {
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Product Categories</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900">Product Categories</h1>
           <p className="text-slate-500 text-xs font-medium mt-0.5">
-            {categories.length} categories • {categories.filter(c => c.active).length} active
+            {categories.length} categories • {categories.filter((c) => c.active).length} active
           </p>
         </div>
         <button
-          onClick={() => { resetForm(); setShowForm(!showForm); }}
-          className="btn-primary py-2 px-4 text-xs font-bold shadow-md"
+          onClick={() => {
+            resetForm();
+            setShowForm(!showForm);
+          }}
+          className="btn-primary py-2 px-4 text-xs font-bold shadow-md self-start sm:self-auto cursor-pointer"
         >
           {showForm ? '✕ Cancel' : '+ Add Category'}
         </button>
@@ -164,19 +169,17 @@ export default function AdminCategoriesPage() {
 
       {/* Create / Edit Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="card p-6 bg-white border-slate-200 shadow-sm space-y-4">
-          <h3 className="font-bold text-slate-900 text-sm">
-            {editId ? 'Edit Category' : 'New Category'}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="card p-5 sm:p-6 bg-white border-slate-200 shadow-xs space-y-4">
+          <h3 className="font-bold text-slate-900 text-sm">{editId ? 'Edit Category' : 'New Category'}</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="label">Name *</label>
               <input
-                className="input text-xs"
+                className="input text-xs w-full"
                 value={form.name}
-                onChange={e => {
+                onChange={(e) => {
                   const name = e.target.value;
-                  setForm(f => ({ ...f, name, slug: editId ? f.slug : generateSlug(name) }));
+                  setForm((f) => ({ ...f, name, slug: editId ? f.slug : generateSlug(name) }));
                 }}
                 required
               />
@@ -184,48 +187,52 @@ export default function AdminCategoriesPage() {
             <div>
               <label className="label">Slug *</label>
               <input
-                className="input text-xs"
+                className="input text-xs w-full"
                 value={form.slug}
-                onChange={e => setForm(f => ({ ...f, slug: e.target.value }))}
+                onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
                 pattern="^[a-z0-9-]+$"
                 required
               />
             </div>
-            <div className="md:col-span-2">
+            <div className="sm:col-span-2">
               <label className="label">Description</label>
               <input
-                className="input text-xs"
+                className="input text-xs w-full"
                 value={form.description}
-                onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               />
             </div>
             <div>
               <label className="label">Min Order Multiple *</label>
               <input
-                className="input text-xs"
+                className="input text-xs w-full"
                 type="number"
                 min={1}
                 value={form.qtyMultiple}
-                onChange={e => setForm(f => ({ ...f, qtyMultiple: Number(e.target.value) }))}
+                onChange={(e) => setForm((f) => ({ ...f, qtyMultiple: Number(e.target.value) }))}
                 required
               />
             </div>
             <div>
               <label className="label">Sort Order</label>
               <input
-                className="input text-xs"
+                className="input text-xs w-full"
                 type="number"
                 min={0}
                 value={form.sortOrder}
-                onChange={e => setForm(f => ({ ...f, sortOrder: Number(e.target.value) }))}
+                onChange={(e) => setForm((f) => ({ ...f, sortOrder: Number(e.target.value) }))}
               />
             </div>
           </div>
           <div className="flex gap-2 pt-2">
-            <button type="submit" className="btn-primary py-2 px-4 text-xs font-bold shadow-md">
+            <button type="submit" className="btn-primary py-2 px-4 text-xs font-bold shadow-md cursor-pointer">
               {editId ? 'Save Changes' : 'Create Category'}
             </button>
-            <button type="button" onClick={resetForm} className="btn-secondary py-2 px-4 text-xs font-bold">
+            <button
+              type="button"
+              onClick={resetForm}
+              className="btn-secondary py-2 px-4 text-xs font-bold cursor-pointer"
+            >
               Cancel
             </button>
           </div>
@@ -236,9 +243,9 @@ export default function AdminCategoriesPage() {
       {loading ? (
         <div className="text-center py-12 text-slate-500 text-xs font-medium">Loading categories...</div>
       ) : (
-        <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
-          <div className="table-container border-0 rounded-none shadow-none">
-            <table className="table">
+        <div className="card overflow-hidden bg-white border-slate-200 shadow-xs">
+          <div className="table-container border-0 rounded-none shadow-none overflow-x-auto">
+            <table className="table min-w-[640px]">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -251,7 +258,7 @@ export default function AdminCategoriesPage() {
                 </tr>
               </thead>
               <tbody>
-                {categories.map(cat => (
+                {categories.map((cat) => (
                   <tr key={cat.id} className={cat.active ? '' : 'opacity-50'}>
                     <td className="font-bold text-slate-900 text-xs">{cat.name}</td>
                     <td>
@@ -265,7 +272,9 @@ export default function AdminCategoriesPage() {
                     <td>
                       <button
                         onClick={() => toggleActive(cat)}
-                        className={`cursor-pointer border-0 bg-transparent p-0 ${cat.active ? 'badge-green' : 'badge-red'}`}
+                        className={`cursor-pointer border-0 bg-transparent p-0 ${
+                          cat.active ? 'badge-green' : 'badge-red'
+                        }`}
                         title={`Click to ${cat.active ? 'disable' : 'enable'}`}
                       >
                         {cat.active ? '● Active' : '○ Disabled'}
@@ -275,7 +284,7 @@ export default function AdminCategoriesPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => startEdit(cat)}
-                          className="btn-secondary py-1 px-2.5 text-xs font-bold"
+                          className="btn-secondary py-1 px-2.5 text-xs font-bold cursor-pointer"
                         >
                           Edit
                         </button>

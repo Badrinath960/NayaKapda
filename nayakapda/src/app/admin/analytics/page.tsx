@@ -64,66 +64,91 @@ export default async function AdminAnalyticsPage() {
   const { salesTrend, topProducts, discountReport, totalRevenue, totalOrders } = await getAnalyticsData(from, to);
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-2xl font-black text-slate-900">Analytics</h1>
-        <p className="text-slate-500 text-xs font-medium mt-0.5">Last 30 days overview</p>
+        <h1 className="text-xl sm:text-2xl font-black text-slate-900">Analytics</h1>
+        <p className="text-slate-500 text-xs font-medium mt-0.5">Last 30 days performance overview</p>
       </div>
 
       {/* KPI Totals */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="card p-6 bg-white border-slate-200 shadow-sm">
-          <p className="text-xs text-slate-500 font-medium mb-1">Total Revenue (30d)</p>
-          <p className="text-3xl font-black text-orange-600">{formatINR(totalRevenue)}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <div className="card p-5 sm:p-6 bg-white border-slate-200 shadow-xs">
+          <p className="text-xs text-slate-500 font-semibold mb-1 uppercase tracking-wider">Total Revenue (30d)</p>
+          <p className="text-2xl sm:text-3xl font-black text-orange-600 truncate">{formatINR(totalRevenue)}</p>
         </div>
-        <div className="card p-6 bg-white border-slate-200 shadow-sm">
-          <p className="text-xs text-slate-500 font-medium mb-1">Total Orders (30d)</p>
-          <p className="text-3xl font-black text-sky-600">{totalOrders}</p>
+        <div className="card p-5 sm:p-6 bg-white border-slate-200 shadow-xs">
+          <p className="text-xs text-slate-500 font-semibold mb-1 uppercase tracking-wider">Total Orders (30d)</p>
+          <p className="text-2xl sm:text-3xl font-black text-sky-600 truncate">{totalOrders}</p>
         </div>
       </div>
 
       {/* Top Products */}
-      <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
-        <div className="p-5 border-b border-slate-200 font-bold text-slate-900 text-sm">Top Products by Revenue</div>
-        <div className="table-container rounded-none border-0 shadow-none">
-          <table className="table">
+      <div className="card overflow-hidden bg-white border-slate-200 shadow-xs">
+        <div className="p-4 sm:p-5 border-b border-slate-200 font-bold text-slate-900 text-sm">
+          Top Products by Revenue
+        </div>
+        <div className="table-container rounded-none border-0 shadow-none overflow-x-auto">
+          <table className="table min-w-[500px]">
             <thead>
-              <tr><th>#</th><th>Product</th><th>Units Sold</th><th>Revenue</th></tr>
+              <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th>Units Sold</th>
+                <th>Revenue</th>
+              </tr>
             </thead>
             <tbody>
               {topProducts.length === 0 ? (
-                <tr><td colSpan={4} className="text-center py-6 text-slate-500 text-xs font-medium">No data</td></tr>
-              ) : topProducts.map((p, i) => (
-                <tr key={p.productName}>
-                  <td className="text-slate-400 font-mono text-xs">{i + 1}</td>
-                  <td className="font-bold text-slate-900 text-xs">{p.productName}</td>
-                  <td className="text-slate-700 text-xs font-semibold">{Number(p.units).toLocaleString()}</td>
-                  <td className="font-black text-orange-600 text-xs">{formatINR(p.revenue)}</td>
+                <tr>
+                  <td colSpan={4} className="text-center py-6 text-slate-500 text-xs font-medium">
+                    No data available
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                topProducts.map((p, i) => (
+                  <tr key={p.productName}>
+                    <td className="text-slate-400 font-mono text-xs">{i + 1}</td>
+                    <td className="font-bold text-slate-900 text-xs">{p.productName}</td>
+                    <td className="text-slate-700 text-xs font-semibold">{Number(p.units).toLocaleString()}</td>
+                    <td className="font-black text-orange-600 text-xs">{formatINR(p.revenue)}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
       {/* Daily Trend */}
-      <div className="card p-6 bg-white border-slate-200 shadow-sm space-y-4">
+      <div className="card p-4 sm:p-6 bg-white border-slate-200 shadow-xs space-y-4">
         <h3 className="font-bold text-slate-900 text-sm">Daily Revenue Trend</h3>
-        <div className="table-container border-slate-200 shadow-none">
-          <table className="table w-full">
+        <div className="table-container border-slate-200 shadow-none overflow-x-auto">
+          <table className="table w-full min-w-[450px]">
             <thead>
-              <tr><th>Date</th><th>Units Sold</th><th>Revenue</th></tr>
+              <tr>
+                <th>Date</th>
+                <th>Units Sold</th>
+                <th>Revenue</th>
+              </tr>
             </thead>
             <tbody>
               {salesTrend.length === 0 ? (
-                <tr><td colSpan={3} className="text-center py-6 text-slate-500 text-xs font-medium">No sales in this period</td></tr>
-              ) : salesTrend.map((row) => (
-                <tr key={String(row.date)}>
-                  <td className="text-slate-500 text-xs font-medium">{new Date(row.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</td>
-                  <td className="text-slate-700 text-xs font-semibold">{Number(row.units).toLocaleString()}</td>
-                  <td className="font-bold text-slate-900 text-xs">{formatINR(row.revenue)}</td>
+                <tr>
+                  <td colSpan={3} className="text-center py-6 text-slate-500 text-xs font-medium">
+                    No sales recorded in this period
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                salesTrend.map((row) => (
+                  <tr key={String(row.date)}>
+                    <td className="text-slate-500 text-xs font-medium">
+                      {new Date(row.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                    </td>
+                    <td className="text-slate-700 text-xs font-semibold">{Number(row.units).toLocaleString()}</td>
+                    <td className="font-bold text-slate-900 text-xs">{formatINR(row.revenue)}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -131,17 +156,26 @@ export default async function AdminAnalyticsPage() {
 
       {/* Discount Report */}
       {discountReport.length > 0 && (
-        <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
-          <div className="p-5 border-b border-slate-200 font-bold text-slate-900 text-sm">Discount Code Performance</div>
-          <div className="table-container rounded-none border-0 shadow-none">
-            <table className="table">
+        <div className="card overflow-hidden bg-white border-slate-200 shadow-xs">
+          <div className="p-4 sm:p-5 border-b border-slate-200 font-bold text-slate-900 text-sm">
+            Discount Code Performance
+          </div>
+          <div className="table-container rounded-none border-0 shadow-none overflow-x-auto">
+            <table className="table min-w-[500px]">
               <thead>
-                <tr><th>Code</th><th>Uses</th><th>Total Discount Given</th><th>Revenue Generated</th></tr>
+                <tr>
+                  <th>Code</th>
+                  <th>Uses</th>
+                  <th>Total Discount Given</th>
+                  <th>Revenue Generated</th>
+                </tr>
               </thead>
               <tbody>
                 {discountReport.map((d) => (
                   <tr key={d.code}>
-                    <td><span className="font-mono font-bold text-orange-600 text-xs">{d.code}</span></td>
+                    <td>
+                      <span className="font-mono font-bold text-orange-600 text-xs">{d.code}</span>
+                    </td>
                     <td className="text-slate-700 text-xs font-semibold">{Number(d.uses)}</td>
                     <td className="text-rose-600 font-bold text-xs">{formatINR(d.totalDiscount)}</td>
                     <td className="font-black text-orange-600 text-xs">{formatINR(d.revenue)}</td>

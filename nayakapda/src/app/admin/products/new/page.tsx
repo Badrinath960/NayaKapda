@@ -61,7 +61,7 @@ export default function AdminNewProductPage() {
       } else {
         router.push(`/admin/products/${data.data.id}`);
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -69,21 +69,24 @@ export default function AdminNewProductPage() {
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto space-y-4 sm:space-y-6">
       <div>
-        <Link href="/admin/products" className="text-gray-500 text-sm hover:text-white mb-2 flex items-center gap-1">
+        <Link
+          href="/admin/products"
+          className="text-slate-500 text-xs font-semibold hover:text-slate-900 mb-2 flex items-center gap-1"
+        >
           ← Back to Products
         </Link>
-        <h1 className="text-2xl font-bold">Add New Product</h1>
-        <p className="text-gray-500 text-sm mt-1">Set up a base wholesale catalog item</p>
+        <h1 className="text-xl sm:text-2xl font-black text-slate-900">Add New Product</h1>
+        <p className="text-slate-500 text-xs font-medium mt-1">Set up a base wholesale catalog item</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="card p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="card p-5 sm:p-6 space-y-4 bg-white border-slate-200 shadow-xs">
         <div>
           <label className="label">Product Name *</label>
           <input
             type="text"
-            className="input"
+            className="input w-full"
             placeholder="Plain Premium Cotton Hoodie"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -94,7 +97,7 @@ export default function AdminNewProductPage() {
         <div>
           <label className="label">Category *</label>
           <select
-            className="input"
+            className="input w-full"
             value={form.categoryId}
             onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
             required
@@ -111,7 +114,7 @@ export default function AdminNewProductPage() {
           <label className="label">Base Price (₹) *</label>
           <input
             type="number"
-            className="input"
+            className="input w-full"
             placeholder="350"
             value={form.basePrice}
             onChange={(e) => setForm({ ...form, basePrice: e.target.value })}
@@ -121,12 +124,12 @@ export default function AdminNewProductPage() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label className="label">GSM (Weight)</label>
             <input
               type="number"
-              className="input"
+              className="input w-full"
               placeholder="320"
               value={form.gsm}
               onChange={(e) => setForm({ ...form, gsm: e.target.value })}
@@ -137,7 +140,7 @@ export default function AdminNewProductPage() {
             <label className="label">Fabric Composition</label>
             <input
               type="text"
-              className="input"
+              className="input w-full"
               placeholder="100% Cotton / 80-20 Blend"
               value={form.fabricComposition}
               onChange={(e) => setForm({ ...form, fabricComposition: e.target.value })}
@@ -148,7 +151,7 @@ export default function AdminNewProductPage() {
         <div>
           <label className="label">Description</label>
           <textarea
-            className="input min-h-[120px] resize-none"
+            className="input min-h-[120px] resize-none w-full"
             placeholder="Describe the fabric quality, styling, stitching, fit..."
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -156,13 +159,13 @@ export default function AdminNewProductPage() {
         </div>
 
         {error && (
-          <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-sm">
+          <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-semibold">
             {error}
           </div>
         )}
 
-        <button type="submit" disabled={loading} className="btn-primary w-full py-2.5">
-          {loading ? 'Creating...' : 'Create Product & Continue to Details'}
+        <button type="submit" disabled={loading} className="btn-primary w-full py-2.5 text-xs font-bold cursor-pointer">
+          {loading ? 'Creating Product...' : 'Create Product & Continue to Details →'}
         </button>
       </form>
     </div>

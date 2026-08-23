@@ -51,25 +51,27 @@ export default function AdminCustomersPage() {
   }, [page, search]);
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-2xl font-black text-slate-900">Customers</h1>
-        <p className="text-slate-500 text-xs font-medium mt-0.5">{total} customer{total !== 1 ? 's' : ''}</p>
+        <h1 className="text-xl sm:text-2xl font-black text-slate-900">Customers</h1>
+        <p className="text-slate-500 text-xs font-medium mt-0.5">
+          {total} customer{total !== 1 ? 's' : ''} registered
+        </p>
       </div>
 
-      <div className="mb-4">
+      <div>
         <input
           type="text"
           placeholder="Search by name, phone or email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="input py-2 px-4 text-xs w-72"
+          className="input py-2 px-3 text-xs w-full sm:w-80"
         />
       </div>
 
-      <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
-        <div className="table-container border-0 rounded-none shadow-none">
-          <table className="table">
+      <div className="card overflow-hidden bg-white border-slate-200 shadow-xs">
+        <div className="table-container border-0 rounded-none shadow-none overflow-x-auto">
+          <table className="table min-w-[700px]">
             <thead>
               <tr>
                 <th>Customer</th>

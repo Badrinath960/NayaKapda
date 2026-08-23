@@ -88,51 +88,52 @@ export default function AdminDiscountsPage() {
   const list = discounts ?? [];
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Discount Codes</h1>
-          <p className="text-slate-500 text-xs font-medium mt-0.5">Manage promo codes and percentage offers</p>
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900">Discount Codes</h1>
+          <p className="text-slate-500 text-xs font-medium mt-0.5">Manage promotional codes and bulk offers</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="btn-primary py-2 px-4 text-xs font-bold shadow-sm"
+          className="btn-primary py-2 px-4 text-xs font-bold shadow-sm self-start sm:self-auto cursor-pointer"
         >
-          {showForm ? 'Cancel' : '+ Create Code'}
+          {showForm ? '✕ Cancel' : '+ Create Code'}
         </button>
       </div>
 
       {showForm && (
-        <form onSubmit={handleCreate} className="card p-6 bg-white border-slate-200 shadow-sm space-y-4 max-w-xl">
+        <form onSubmit={handleCreate} className="card p-5 sm:p-6 bg-white border-slate-200 shadow-xs space-y-4 max-w-xl">
           <h3 className="font-bold text-sm text-slate-900">New Discount Code</h3>
           {error && <p className="text-xs text-rose-600 font-semibold">{error}</p>}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="label">Code Name</label>
+              <label className="label">Code Name *</label>
               <input
                 type="text"
                 required
                 placeholder="e.g. WELCOME10"
                 value={form.code}
                 onChange={(e) => setForm({ ...form, code: e.target.value })}
-                className="input py-2 px-3 text-xs uppercase"
+                className="input py-2 px-3 text-xs uppercase w-full"
               />
             </div>
             <div>
-              <label className="label">Discount Type</label>
+              <label className="label">Discount Type *</label>
               <select
                 value={form.type}
                 onChange={(e) => setForm({ ...form, type: e.target.value as any })}
-                className="input py-2 px-3 text-xs"
+                className="input py-2 px-3 text-xs w-full"
               >
                 <option value="PERCENT">Percentage (%)</option>
                 <option value="FLAT">Flat Rupee (₹)</option>
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div>
-              <label className="label">Value</label>
+              <label className="label">Value *</label>
               <input
                 type="number"
                 step="0.01"
@@ -140,7 +141,7 @@ export default function AdminDiscountsPage() {
                 placeholder={form.type === 'PERCENT' ? '10 (%)' : '100 (₹)'}
                 value={form.value}
                 onChange={(e) => setForm({ ...form, value: e.target.value })}
-                className="input py-2 px-3 text-xs"
+                className="input py-2 px-3 text-xs w-full"
               />
             </div>
             <div>
@@ -150,7 +151,7 @@ export default function AdminDiscountsPage() {
                 placeholder="Optional"
                 value={form.minOrderQty}
                 onChange={(e) => setForm({ ...form, minOrderQty: e.target.value })}
-                className="input py-2 px-3 text-xs"
+                className="input py-2 px-3 text-xs w-full"
               />
             </div>
             <div>
@@ -160,19 +161,19 @@ export default function AdminDiscountsPage() {
                 placeholder="Optional"
                 value={form.maxUses}
                 onChange={(e) => setForm({ ...form, maxUses: e.target.value })}
-                className="input py-2 px-3 text-xs"
+                className="input py-2 px-3 text-xs w-full"
               />
             </div>
           </div>
-          <button type="submit" disabled={saving} className="btn-primary py-2 px-5 text-xs font-bold">
+          <button type="submit" disabled={saving} className="btn-primary py-2 px-5 text-xs font-bold cursor-pointer">
             {saving ? 'Creating...' : 'Save Discount Code'}
           </button>
         </form>
       )}
 
-      <div className="card overflow-hidden bg-white border-slate-200 shadow-sm">
-        <div className="table-container border-0 rounded-none shadow-none">
-          <table className="table">
+      <div className="card overflow-hidden bg-white border-slate-200 shadow-xs">
+        <div className="table-container border-0 rounded-none shadow-none overflow-x-auto">
+          <table className="table min-w-[640px]">
             <thead>
               <tr>
                 <th>Code</th>
