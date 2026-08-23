@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { prisma } from '@/lib/prisma';
 import { adminLoginSchema, validateRequest } from '@/lib/validation';
 import { withErrorHandler } from '@/lib/middleware';
-
-// POST /api/admin/auth/login
+import { signAdminJwt } from '@/lib/adminAuth';
 // Requirements: 2.1, 2.2
 export const POST = withErrorHandler(async (request: NextRequest) => {
   const body = await request.json();
@@ -45,9 +43,10 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     adminId: user.id,
     email: user.email!,
     role: user.role as 'STAFF' | 'SUPER_ADMIN',
+    name: user.name ?? undefined,
   };
 
-  const token = jwt.sign(payload, process.env.ADMIN_JWT_SECRET!, { expiresIn: '8h' });
+  const token = await signAdminJwt(payload);
 
   const response = NextResponse.json({
     data: {

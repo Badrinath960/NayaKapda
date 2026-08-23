@@ -1,19 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import jwt from 'jsonwebtoken';
+import { verifyAdminJwt, AdminJWTPayload } from '@/lib/adminAuth';
 
-// ─────────────────────────────────────────
-// TYPES
-// ─────────────────────────────────────────
-
-export type AdminJWTPayload = {
-  adminId: string;
-  email: string;
-  role: 'STAFF' | 'SUPER_ADMIN';
-  iat: number;
-  exp: number;
-};
+export type { AdminJWTPayload };
 
 type AdminRouteHandler = (
   request: NextRequest,
@@ -77,6 +67,8 @@ export function withCustomerAuth(handler: CustomerRouteHandler) {
 // ADMIN AUTH GUARD
 // ─────────────────────────────────────────
 
+
+
 /**
  * Middleware HOC for admin routes.
  * Verifies admin JWT cookie.
@@ -90,16 +82,12 @@ export function withAdminAuth(handler: AdminRouteHandler, requiredRole?: 'SUPER_
   return withErrorHandler(async (request: NextRequest, context: { params: any }) => {
     const token = request.cookies.get('admin-session')?.value;
 
-    if (!token) {
-      return NextResponse.json({ error: 'UNAUTHENTICATED' }, { status: 401 });
+    const authResult = await verifyAdminJwt(token);
+    if (!authResult.valid || !authResult.payload) {
+      return NextResponse.json({ error: 'UNAUTHENTICATED', message: 'Invalid or missing admin session' }, { status: 401 });
     }
 
-    let payload: AdminJWTPayload;
-    try {
-      payload = jwt.verify(token, process.env.ADMIN_JWT_SECRET!) as AdminJWTPayload;
-    } catch {
-      return NextResponse.json({ error: 'UNAUTHENTICATED', message: 'Invalid session' }, { status: 401 });
-    }
+    const payload = authResult.payload;
 
     if (requiredRole && payload.role !== requiredRole) {
       return NextResponse.json(
