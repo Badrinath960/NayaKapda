@@ -20,12 +20,12 @@ export function ProductCard({ name, slug, gsm, fabricComposition, priceFrom, cat
   return (
     <Link href={`/products/${slug}`} className="group card-hover overflow-hidden flex flex-col bg-white">
       {/* Image */}
-      <div className="aspect-[4/3] bg-slate-100 relative overflow-hidden border-b border-slate-100">
+      <div className="aspect-square bg-slate-50 relative overflow-hidden border-b border-slate-100 flex items-center justify-center p-3">
         {photo ? (
           <img
             src={photo.url}
             alt={photo.altText ?? name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="max-w-full max-h-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-300 mx-auto"
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center">

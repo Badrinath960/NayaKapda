@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { SizeQuantityMatrix } from '@/components/products/SizeQuantityMatrix';
+import { ProductGallery } from '@/components/products/ProductGallery';
 import { formatINR } from '@/lib/utils';
 import type { Metadata } from 'next';
 
@@ -109,27 +110,12 @@ export default async function ProductDetailPage({ params }: Props) {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
             {/* Gallery */}
-            <div className="space-y-4">
-              <div className="aspect-[4/3] card bg-white overflow-hidden flex items-center justify-center border-slate-200 shadow-sm">
-                {product.photos[0] ? (
-                  <img src={product.photos[0].url} alt={product.name} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="text-center p-8">
-                    <span className="text-6xl mb-3 block">👕</span>
-                    <p className="text-sm font-bold text-slate-700">{product.name}</p>
-                  </div>
-                )}
-              </div>
-              {product.photos.length > 1 && (
-                <div className="grid grid-cols-4 gap-3">
-                  {product.photos.map((p) => (
-                    <div key={p.id} className="aspect-square card bg-white overflow-hidden border-slate-200">
-                      <img src={p.url} alt={p.altText ?? product.name} className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <ProductGallery
+              photos={product.photos}
+              productName={product.name}
+              categoryName={product.category.name}
+              gsm={product.gsm}
+            />
 
             {/* Product Overview & Slab Pricing */}
             <div className="space-y-6">

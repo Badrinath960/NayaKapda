@@ -157,12 +157,27 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
     const deletedVariantIds = variants.filter(v => v._delete && v.id).map(v => v.id!);
 
     const payload = {
-      ...form,
+      name: form.name,
+      categoryId: form.categoryId,
+      description: form.description,
       gsm: form.gsm ? parseInt(form.gsm) : null,
-      basePrice: parseFloat(form.basePrice),
-      variants: activeVariants.map(({ _delete, ...v }) => v),
+      fabricComposition: form.fabricComposition,
+      basePrice: parseFloat(form.basePrice) || 0,
+      active: form.active,
+      variants: activeVariants.map((v) => ({
+        ...(v.id ? { id: v.id } : {}),
+        size: v.size,
+        color: v.color,
+        sku: v.sku,
+        stockQty: Number(v.stockQty) || 0,
+        active: v.active !== false,
+      })),
       deletedVariantIds,
-      pricingTiers: tiers,
+      pricingTiers: tiers.map((t) => ({
+        minQty: Number(t.minQty),
+        maxQty: t.maxQty ? Number(t.maxQty) : null,
+        pricePerPiece: Number(t.pricePerPiece),
+      })),
     };
 
     try {
@@ -173,7 +188,7 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.message || 'Failed to update product');
+        setError(data.message || (data.errors ? JSON.stringify(data.errors) : 'Failed to update product'));
       } else {
         setSuccess('Product saved successfully ✓');
         loadData();

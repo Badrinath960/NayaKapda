@@ -7,18 +7,18 @@ import { recordAuditLog } from '@/lib/audit';
 
 const updateProductSchema = z.object({
   name: z.string().min(1).optional(),
-  categoryId: z.string().cuid().optional(),
+  categoryId: z.string().min(1).optional(),
   description: z.string().optional(),
-  gsm: z.number().int().positive().nullable().optional(),
+  gsm: z.number().int().nonnegative().nullable().optional(),
   fabricComposition: z.string().optional(),
-  basePrice: z.number().positive().optional(),
+  basePrice: z.number().nonnegative().optional(),
   active: z.boolean().optional(),
   pricingTiers: z
     .array(
       z.object({
-        minQty: z.number().int().positive(),
+        minQty: z.number().int().nonnegative(),
         maxQty: z.number().int().positive().nullable(),
-        pricePerPiece: z.number().positive(),
+        pricePerPiece: z.number().nonnegative(),
       })
     )
     .optional(),
@@ -34,7 +34,7 @@ const updateProductSchema = z.object({
       })
     )
     .optional(),
-  // IDs of variants to permanently delete
+  // IDs of variants to permanently delete or deactivate
   deletedVariantIds: z.array(z.string()).optional(),
 });
 
@@ -80,7 +80,7 @@ export const PATCH = withAdminAuth(async (request: NextRequest, context: { param
   });
   if (!existing) return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
 
-  const { pricingTiers, variants, ...productFields } = parsed.data;
+  const { pricingTiers, variants, deletedVariantIds, ...productFields } = parsed.data;
 
   // Run in a transaction
   const updated = await prisma.$transaction(async (tx) => {
@@ -118,19 +118,44 @@ export const PATCH = withAdminAuth(async (request: NextRequest, context: { param
       });
     }
 
-    // 3. Delete variants marked for removal
-    if (parsed.data.deletedVariantIds && parsed.data.deletedVariantIds.length > 0) {
-      await tx.productVariant.deleteMany({
-        where: {
-          id: { in: parsed.data.deletedVariantIds },
-          productId: id, // safety: only delete variants belonging to this product
-        },
+    // 3. Delete or deactivate variants marked for removal
+    if (deletedVariantIds && deletedVariantIds.length > 0) {
+      // Clear dependent cart items and subscriptions
+      await tx.cartItem.deleteMany({ where: { variantId: { in: deletedVariantIds } } });
+      await tx.stockAlertSubscription.deleteMany({ where: { variantId: { in: deletedVariantIds } } });
+
+      // If any variant is part of past orders, deactivate to preserve order history
+      const orderedVariants = await tx.orderItem.findMany({
+        where: { variantId: { in: deletedVariantIds } },
+        select: { variantId: true },
       });
+      const orderedSet = new Set(orderedVariants.map((o) => o.variantId));
+
+      const safeToDelete = deletedVariantIds.filter((vId) => !orderedSet.has(vId));
+      const toDeactivate = deletedVariantIds.filter((vId) => orderedSet.has(vId));
+
+      if (safeToDelete.length > 0) {
+        await tx.productVariant.deleteMany({
+          where: {
+            id: { in: safeToDelete },
+            productId: id,
+          },
+        });
+      }
+
+      if (toDeactivate.length > 0) {
+        await tx.productVariant.updateMany({
+          where: {
+            id: { in: toDeactivate },
+            productId: id,
+          },
+          data: { active: false, stockQty: 0 },
+        });
+      }
     }
 
     // 4. Update Variants if provided
     if (variants !== undefined) {
-      // Simple sync: update existing or create new ones
       for (const variant of variants) {
         if (variant.id) {
           await tx.productVariant.update({
@@ -144,16 +169,30 @@ export const PATCH = withAdminAuth(async (request: NextRequest, context: { param
             },
           });
         } else {
-          await tx.productVariant.create({
-            data: {
-              productId: id,
-              size: variant.size,
-              color: variant.color,
-              sku: variant.sku,
-              stockQty: variant.stockQty,
-              active: variant.active,
-            },
-          });
+          // Check if SKU already exists for this product
+          const existingSku = await tx.productVariant.findUnique({ where: { sku: variant.sku } });
+          if (existingSku) {
+            await tx.productVariant.update({
+              where: { id: existingSku.id },
+              data: {
+                size: variant.size,
+                color: variant.color,
+                stockQty: variant.stockQty,
+                active: variant.active,
+              },
+            });
+          } else {
+            await tx.productVariant.create({
+              data: {
+                productId: id,
+                size: variant.size,
+                color: variant.color,
+                sku: variant.sku,
+                stockQty: variant.stockQty,
+                active: variant.active,
+              },
+            });
+          }
         }
       }
     }

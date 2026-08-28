@@ -5,11 +5,11 @@ import { z } from 'zod';
 
 const createProductSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  categoryId: z.string().cuid('Invalid category ID'),
+  categoryId: z.string().min(1, 'Category is required'),
   description: z.string().optional(),
-  gsm: z.number().int().positive().nullable().optional(),
+  gsm: z.number().int().nonnegative().nullable().optional(),
   fabricComposition: z.string().optional(),
-  basePrice: z.number().positive('Base price must be positive'),
+  basePrice: z.number().nonnegative('Base price must be non-negative'),
 });
 
 // GET /api/admin/products — list products for admin
