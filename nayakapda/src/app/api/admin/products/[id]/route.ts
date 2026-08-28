@@ -39,8 +39,8 @@ const updateProductSchema = z.object({
 });
 
 // GET /api/admin/products/[id] — get product detail including variants and tiers
-export const GET = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }) => {
-  const id = context.params.id;
+export const GET = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
   const product = await prisma.product.findUnique({
     where: { id },
     include: {
@@ -66,8 +66,8 @@ export const GET = withAdminAuth(async (request: NextRequest, context: { params:
 });
 
 // PATCH /api/admin/products/[id] — update product, variants, and pricing tiers
-export const PATCH = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }, admin) => {
-  const id = context.params.id;
+export const PATCH = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }, admin) => {
+  const { id } = await context.params;
   const body = await request.json();
   const parsed = updateProductSchema.safeParse(body);
   if (!parsed.success) {
@@ -165,8 +165,8 @@ export const PATCH = withAdminAuth(async (request: NextRequest, context: { param
 });
 
 // DELETE /api/admin/products/[id] — delete product
-export const DELETE = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }, admin) => {
-  const id = context.params.id;
+export const DELETE = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }, admin) => {
+  const { id } = await context.params;
   const existing = await prisma.product.findUnique({ where: { id } });
   if (!existing) return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
 

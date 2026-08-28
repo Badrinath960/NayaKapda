@@ -131,8 +131,8 @@ const InvoiceDocument: React.FC<InvoiceProps> = ({ order }) => {
   );
 };
 
-export const GET = withCustomerAuth(async (request: NextRequest, context: { params: { id: string } }, session) => {
-  const id = context.params.id;
+export const GET = withCustomerAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }, session) => {
+  const { id } = await context.params;
   const order = await prisma.order.findUnique({
     where: { id },
     include: {

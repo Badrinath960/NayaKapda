@@ -6,8 +6,8 @@ import { AuditAction } from '@prisma/client';
 import { recordAuditLog } from '@/lib/audit';
 
 // GET /api/admin/customers/[id]
-export const GET = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }) => {
-  const id = context.params.id;
+export const GET = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
   const customer = await prisma.user.findUnique({
     where: { id, role: 'CUSTOMER' },
     include: {
@@ -20,8 +20,8 @@ export const GET = withAdminAuth(async (request: NextRequest, context: { params:
 });
 
 // PATCH /api/admin/customers/[id] — update credit limit (SUPER_ADMIN only)
-export const PATCH = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }, admin) => {
-  const id = context.params.id;
+export const PATCH = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }, admin) => {
+  const { id } = await context.params;
   const body = await request.json();
   const schema = z.object({ limitAmount: z.number().min(0) });
   const parsed = schema.safeParse(body);

@@ -6,8 +6,8 @@ import { AuditAction } from '@prisma/client';
 import { recordAuditLog } from '@/lib/audit';
 
 // PATCH /api/admin/discounts/[id]
-export const PATCH = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }, admin) => {
-  const id = context.params.id;
+export const PATCH = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }, admin) => {
+  const { id } = await context.params;
   const body = await request.json();
   const schema = z.object({
     active: z.boolean().optional(),
@@ -43,8 +43,8 @@ export const PATCH = withAdminAuth(async (request: NextRequest, context: { param
 }, 'SUPER_ADMIN');
 
 // DELETE /api/admin/discounts/[id]
-export const DELETE = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }, admin) => {
-  const id = context.params.id;
+export const DELETE = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }, admin) => {
+  const { id } = await context.params;
   const existing = await prisma.discountCode.findUnique({ where: { id } });
   if (!existing) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
 

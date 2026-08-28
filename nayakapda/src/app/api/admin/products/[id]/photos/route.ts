@@ -8,8 +8,8 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 // GET /api/admin/products/[id]/photos — list all photos for a product
-export const GET = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }) => {
-  const { id } = context.params;
+export const GET = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
 
   const photos = await prisma.productPhoto.findMany({
     where: { productId: id },
@@ -20,8 +20,8 @@ export const GET = withAdminAuth(async (request: NextRequest, context: { params:
 });
 
 // POST /api/admin/products/[id]/photos — upload a new photo
-export const POST = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }) => {
-  const { id } = context.params;
+export const POST = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
 
   // Verify product exists
   const product = await prisma.product.findUnique({ where: { id } });

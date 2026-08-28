@@ -10,8 +10,8 @@ const updateFaqSchema = z.object({
 });
 
 // PATCH /api/admin/faq/[id]
-export const PATCH = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }) => {
-  const id = context.params.id;
+export const PATCH = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
   const body = await request.json();
   const parsed = updateFaqSchema.safeParse(body);
   if (!parsed.success) {
@@ -27,8 +27,8 @@ export const PATCH = withAdminAuth(async (request: NextRequest, context: { param
 });
 
 // DELETE /api/admin/faq/[id]
-export const DELETE = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }) => {
-  const id = context.params.id;
+export const DELETE = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
   await prisma.fAQEntry.delete({ where: { id } });
   return NextResponse.json({ success: true });
 });

@@ -13,8 +13,8 @@ const updateShippingSchema = z.object({
 });
 
 // PATCH /api/admin/shipping-methods/[id]
-export const PATCH = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }) => {
-  const id = context.params.id;
+export const PATCH = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
   const body = await request.json();
   const parsed = updateShippingSchema.safeParse(body);
   if (!parsed.success) {
@@ -30,8 +30,8 @@ export const PATCH = withAdminAuth(async (request: NextRequest, context: { param
 });
 
 // DELETE /api/admin/shipping-methods/[id]
-export const DELETE = withAdminAuth(async (request: NextRequest, context: { params: { id: string } }) => {
-  const id = context.params.id;
+export const DELETE = withAdminAuth(async (request: NextRequest, context: { params: Promise<{ id: string }> }) => {
+  const { id } = await context.params;
   await prisma.shippingMethod.delete({ where: { id } });
   return NextResponse.json({ success: true });
 });

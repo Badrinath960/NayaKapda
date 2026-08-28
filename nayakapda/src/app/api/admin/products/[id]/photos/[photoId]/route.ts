@@ -6,9 +6,9 @@ import { withAdminAuth } from '@/lib/middleware';
 // PATCH /api/admin/products/[id]/photos/[photoId] — update altText or sortOrder
 export const PATCH = withAdminAuth(async (
   request: NextRequest,
-  context: { params: { id: string; photoId: string } }
+  context: { params: Promise<{ id: string; photoId: string }> }
 ) => {
-  const { id, photoId } = context.params;
+  const { id, photoId } = await context.params;
 
   const photo = await prisma.productPhoto.findFirst({
     where: { id: photoId, productId: id },
@@ -33,9 +33,9 @@ export const PATCH = withAdminAuth(async (
 // DELETE /api/admin/products/[id]/photos/[photoId] — delete photo from DB + Cloudinary
 export const DELETE = withAdminAuth(async (
   request: NextRequest,
-  context: { params: { id: string; photoId: string } }
+  context: { params: Promise<{ id: string; photoId: string }> }
 ) => {
-  const { id, photoId } = context.params;
+  const { id, photoId } = await context.params;
 
   const photo = await prisma.productPhoto.findFirst({
     where: { id: photoId, productId: id },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -36,8 +36,9 @@ type Category = {
   name: string;
 };
 
-export default function AdminEditProductPage({ params }: { params: { id: string } }) {
+export default function AdminEditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  const { id } = use(params);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -74,7 +75,7 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
     try {
       const [catRes, prodRes] = await Promise.all([
         fetch('/api/admin/categories'),
-        fetch(`/api/admin/products/${params.id}`),
+        fetch(`/api/admin/products/${id}`),
       ]);
       const catData = await catRes.json();
       const prodData = await prodRes.json();
@@ -100,7 +101,7 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
     } finally {
       setLoading(false);
     }
-  }, [params.id]);
+  }, [id]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
@@ -165,7 +166,7 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
     };
 
     try {
-      const res = await fetch(`/api/admin/products/${params.id}`, {
+      const res = await fetch(`/api/admin/products/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -187,7 +188,7 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this product? This action is permanent.')) return;
     try {
-      const res = await fetch(`/api/admin/products/${params.id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
       if (res.ok) {
         router.push('/admin/products');
       } else {
@@ -209,7 +210,7 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
     formData.append('altText', form.name || 'Product image');
 
     try {
-      const res = await fetch(`/api/admin/products/${params.id}/photos`, {
+      const res = await fetch(`/api/admin/products/${id}/photos`, {
         method: 'POST',
         body: formData,
       });
@@ -243,7 +244,7 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
   const handleDeletePhoto = async (photoId: string) => {
     if (!confirm('Delete this photo?')) return;
     try {
-      const res = await fetch(`/api/admin/products/${params.id}/photos/${photoId}`, {
+      const res = await fetch(`/api/admin/products/${id}/photos/${photoId}`, {
         method: 'DELETE',
       });
       if (res.ok) {
@@ -257,7 +258,7 @@ export default function AdminEditProductPage({ params }: { params: { id: string 
   };
 
   const handleUpdateAltText = async (photoId: string, altText: string) => {
-    await fetch(`/api/admin/products/${params.id}/photos/${photoId}`, {
+    await fetch(`/api/admin/products/${id}/photos/${photoId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ altText }),

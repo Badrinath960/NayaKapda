@@ -5,15 +5,15 @@ import { verifyAdminJwt, AdminJWTPayload } from '@/lib/adminAuth';
 
 export type { AdminJWTPayload };
 
-type AdminRouteHandler = (
+type AdminRouteHandler<TContext = any> = (
   request: NextRequest,
-  context: { params: any },
+  context: TContext,
   admin: AdminJWTPayload
 ) => Promise<NextResponse>;
 
-type CustomerRouteHandler = (
+type CustomerRouteHandler<TContext = any> = (
   request: NextRequest,
-  context: { params: any },
+  context: TContext,
   session: { userId: string; phone: string; role: string }
 ) => Promise<NextResponse>;
 
@@ -49,8 +49,8 @@ export function withErrorHandler<T extends (...args: any[]) => Promise<NextRespo
  * Middleware HOC that requires a valid NextAuth session.
  * Returns 401 if unauthenticated.
  */
-export function withCustomerAuth(handler: CustomerRouteHandler) {
-  return withErrorHandler(async (request: NextRequest, context: { params: any }) => {
+export function withCustomerAuth<TContext = any>(handler: CustomerRouteHandler<TContext>) {
+  return withErrorHandler(async (request: NextRequest, context: TContext) => {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'UNAUTHENTICATED' }, { status: 401 });
@@ -78,8 +78,8 @@ export function withCustomerAuth(handler: CustomerRouteHandler) {
  * Property 10: For any SUPER_ADMIN-only route, STAFF role JWT always receives HTTP 403.
  * Requirements: 2.1, 2.2, 2.3, 2.4
  */
-export function withAdminAuth(handler: AdminRouteHandler, requiredRole?: 'SUPER_ADMIN') {
-  return withErrorHandler(async (request: NextRequest, context: { params: any }) => {
+export function withAdminAuth<TContext = any>(handler: AdminRouteHandler<TContext>, requiredRole?: 'SUPER_ADMIN') {
+  return withErrorHandler(async (request: NextRequest, context: TContext) => {
     const token = request.cookies.get('admin-session')?.value;
 
     const authResult = await verifyAdminJwt(token);
